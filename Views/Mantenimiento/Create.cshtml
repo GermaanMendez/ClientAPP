@@ -1,0 +1,53 @@
+﻿@using MVC.Models.ViewModels;
+@model MantenimientoViewModel;
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create maintenance for the selected cabin</h1>
+<div>@ViewBag.Mensaje</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="FechaMantenimiento" class="control-label"></label>
+                <input asp-for="FechaMantenimiento" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")  />
+                <span asp-validation-for="FechaMantenimiento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CostoMantenimiento" class="control-label"></label>
+                <input asp-for="CostoMantenimiento" class="form-control" />
+                <span asp-validation-for="CostoMantenimiento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NombreEmpleado" class="control-label"></label>
+                <input asp-for="NombreEmpleado" class="form-control" />
+                <span asp-validation-for="NombreEmpleado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdCabaña" class="control-label"></label>
+                <input asp-for="IdCabaña" class="form-control" readonly/>
+                <span asp-validation-for="IdCabaña" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<hr />
+<div>
+    <a asp-action="Index">List of all the maintenances for all the cabins</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

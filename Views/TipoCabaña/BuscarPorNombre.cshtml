@@ -1,0 +1,60 @@
+﻿@using MVC.Models.ViewModels;
+@model TipoCabañaViewModel;
+
+@{
+    ViewData["Title"] = "BuscarPorNombre";
+}
+
+<h1>Search type of cabin for name.</h1>
+<form method="post">
+    <label>Name:</label>
+    <input type="text" name="Nombre" placeholder="Buscar tipo por su nombre."/>
+    <input type="submit" value="Search" class="btn-success " />
+</form>
+<div>@ViewBag.Mensaje</div>
+<div>
+    <hr />
+    <h4>Type of cabin</h4>
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CostoPorHuesped)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CostoPorHuesped)
+        </dd>
+        @if (Model != null)
+        {
+            <dl class="row">
+                <dd class="col-sm-10">
+                    @Html.ActionLink("Delete", "Delete", new { id = Model.Id }, new { @class = "btn btn-danger" })
+                </dd>
+                <dd class="col-sm-10">
+                    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary" })
+                </dd>
+            </dl>
+        }
+
+    </dl>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

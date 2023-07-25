@@ -1,0 +1,64 @@
+﻿
+
+@model MVC.Models.AltaCabañaViewModel
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create new Cabin</h1>
+<div>@ViewBag.Mensaje</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Cabaña.Nombre" class="control-label"></label>
+                <input asp-for="Cabaña.Nombre" class="form-control" />
+                <span asp-validation-for="Cabaña.Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cabaña.Descripcion" class="control-label"></label>
+                <input asp-for="Cabaña.Descripcion" class="form-control" />
+                <span asp-validation-for="Cabaña.Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Cabaña.PoseeJacuzzi" /> @Html.DisplayNameFor(model => model.Cabaña.PoseeJacuzzi)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Cabaña.EstaHabilitada" /> @Html.DisplayNameFor(model => model.Cabaña.EstaHabilitada)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cabaña.CantidadPersonasMax" class="control-label"></label>
+                <input asp-for="Cabaña.CantidadPersonasMax" class="form-control" min="1" />
+                <span asp-validation-for="Cabaña.CantidadPersonasMax" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Foto" class="control-label"></label>
+                <input asp-for="Foto" class="form-control" type="file" />
+                <span asp-validation-for="Foto" class="text-danger"></span>
+            </div>
+                <br />
+                <div class="form-group">
+                <select name="IdTipoCabaña" id="tiposCabañas">
+                        @foreach (var tipo in Model.TiposCabañas)
+                        {
+                            <option value="@tipo.Id">@tipo.Nombre</option>
+                        }
+                   </select>
+                </div>
+            <br />
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@{
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="">Options</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Types of Cabins
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "TipoCabaña")">List</a></li>
+                            <li><a class="dropdown-item"  href="@Url.Action("Create", "TipoCabaña")">Create</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorNombre", "TipoCabaña")">Search for name</a></li>
+                        </ul>
+                    </li>
+                    
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Cabins
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "Cabaña")">List</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Create", "Cabaña")">Create</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorTextoNombre", "Cabaña")">Search for text in the name</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorTipo", "Cabaña")">Search for type</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorCantPersonas", "Cabaña")">Search for amount of guests</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("ListarSoloHabilitadas", "Cabaña")">Search for ables to rent</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("ListarPorTipoYMonto", "Cabaña")">Search for cost</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Maintenances
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="@Url.Action("ListarMantenimientosPorValores", "Mantenimiento")">List for values</a></li>
+                        </ul>
+                    </li>
+
+                <form method="get" asp-controller="Usuario" asp-action="Logout"  class="d-flex">
+                    <button class="btn btn-danger" type="submit">Log out</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+}
+
+
+<div>@ViewBag.Mensaje</div>
+
+<div class="text-center">
+    <p>Developed by: Germán Méndez .</p>
+</div>

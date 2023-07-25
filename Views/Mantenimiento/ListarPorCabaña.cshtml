@@ -1,0 +1,64 @@
+﻿@using MVC.Models.ViewModels;
+@model IEnumerable<MantenimientoViewModel>;
+
+@{
+    ViewData["Title"] = "ListarPorCabaña";
+}
+
+<h1>List of maintenance performed for the selected cabin</h1>
+<div>@ViewBag.Mensaje</div>
+@*@if (Model != null){*@
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaMantenimiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CostoMantenimiento)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NombreEmpleado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdCabaña)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaMantenimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CostoMantenimiento)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NombreEmpleado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdCabaña)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+}
+@*else
+{
+    <h2>No hay mantenimientos realizados para esta cabaña cree uno y vuelva a intentarlo. </h2>
+}*@

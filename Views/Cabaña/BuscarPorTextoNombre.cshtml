@@ -1,0 +1,86 @@
+﻿@using MVC.Models.ViewModels;
+@model IEnumerable<CabañaViewModel>;
+
+@{
+    ViewData["Title"] = "BuscarPorTextoNombre";
+}
+
+<h1>Search cabin for text in the name.</h1>
+
+<form method="post">
+    <label>Text to find: </label>
+    <input type="text" name="texto" id="texto" />
+    <input type="submit" value="Search" class="btn-success" />
+</form>
+<div>@ViewBag.Mensaje</div>
+<p>
+    <a asp-action="Create">Create new</a>
+</p>
+@if(Model!=null){
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Foto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NumeroHabitacion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstaHabilitada)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CantidadPersonasMax)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IdTipoCabaña)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+                    <td>
+                        <img src="/Imagenes/@item.Foto" height="120" />
+                    </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumeroHabitacion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoseeJacuzzi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaHabilitada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadPersonasMax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IdTipoCabaña)
+            </td>
+            <td>
+@*                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+}

@@ -1,0 +1,38 @@
+﻿@model MVC.Models.ViewModels.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+    <p>
+        credentials:<br />
+        german@gmail.com	German123 <br/>
+        usuario@gmail.com	Usuario123 <br />
+        admin@gmail.com	Admin123
+    </p>
+<div class="d-flex justify-content-center align-items-center">
+<h1>Login</h1>
+</div>
+<div class="justify-content-center align-items-center">@ViewBag.Mensaje</div>
+<hr />
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-4">
+        <form asp-action="Login" class="p-3 border rounded">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">Email:</label>
+                <input asp-for="Email" class="form-control" placeholder="Ingrese Email">
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contraseña" class="control-label">Contraseña:</label>
+                <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingrese Contraseña">
+                <span asp-validation-for="Contraseña" class="text-danger"></span>
+            </div>
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
