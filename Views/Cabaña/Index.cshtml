@@ -18,9 +18,6 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.NumeroHabitacion)
-                </th>
-                <th>
                     @Html.DisplayNameFor(model => model.Nombre)
                 </th>
                 <th>
@@ -41,9 +38,6 @@
                 <th>
                     @Html.DisplayNameFor(model => model.TipoCabaña.Nombre)
                 </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TipoCabaña.CostoPorHuesped)
-                </th>
                 <th></th>
             </tr>
         </thead>
@@ -51,9 +45,6 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.NumeroHabitacion)
-                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
@@ -76,11 +67,8 @@
                         @Html.DisplayFor(modelItem => item.TipoCabaña.Nombre)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TipoCabaña.CostoPorHuesped)
-                    </td>
-                    <td>
                         @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
-                        @Html.ActionLink("Detalles/Mantenimientos", "Details", new {  id=item.NumeroHabitacion  })
+                        @Html.ActionLink("Alquilar", "Alquilar", new {  id=item.NumeroHabitacion  })
                         @* @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
                     </td>
                 </tr>

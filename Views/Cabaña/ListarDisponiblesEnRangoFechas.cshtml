@@ -1,29 +1,28 @@
-﻿@using MVC.Models.ViewModels
+﻿@using MVC.Models.ViewModels;
 @model IEnumerable<CabañaViewModel>
 
 @{
-    ViewData["Title"] = "BuscarPorCantPersonas";
+    ViewData["Title"] = "ListarDisponiblesEnRangoFechas";
 }
-
-<h1>Search cabins for amount of people/guests.</h1>
+<h1>Buscar cabañas disponibles para alquilar </h1>
+<p>@ViewBag.Mensaje</p>
 <form method="post">
-    <label>Amount to search</label>
-    <input type="number" name="numero" id="numero" /> 
-    <input type="submit" value="Search"  class="btn-success"/>
+         <label>Fecha desde</label>
+    <input type="date" name="fDesde" id="fDesde" value="2020-01-01" />
+         <label>Fecha Hasta</label>
+    <input type="date" name="fHasta" id="fHasta" value="2020-02-01" />
+         <button type="submit" class="btn btn-primary">Search</button>
 </form>
-<div>@ViewBag.Mensaje</div>
-<p>
-    <a asp-action="Create">Create new</a>
-</p>
-@if(Model!=null){
+@if (Model != null)
+{
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Foto)
+                @Html.DisplayNameFor(model => model.Nombre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre)
+                @Html.DisplayNameFor(model => model.Foto)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Descripcion)
@@ -37,17 +36,21 @@
             <th>
                 @Html.DisplayNameFor(model => model.CantidadPersonasMax)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoCabaña)
+            </th>
+             <th>
             <th></th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-           <td>
-             <img src="/Imagenes/@item.Foto" height="120" />
-           </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Foto)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Descripcion)
@@ -62,9 +65,12 @@
                 @Html.DisplayFor(modelItem => item.CantidadPersonasMax)
             </td>
             <td>
-@*                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
+                @Html.DisplayFor(modelItem => item.TipoCabaña.Nombre)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
                 @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
             </td>
         </tr>
 }

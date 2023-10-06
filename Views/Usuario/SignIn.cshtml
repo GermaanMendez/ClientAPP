@@ -1,0 +1,85 @@
+﻿@model MVC.Models.ViewModels.UsuarioViewModel
+
+@{
+    ViewData["Title"] = "SignIn";
+}
+
+<h1 class="d-flex justify-content-center">Registro</h1>
+
+<hr />
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-4">
+        <form  id="signInForm" asp-action="SignIn">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" id="email" class="form-control" />
+                <span asp-validation-for="Email" id="pEmail"  class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contraseña" class="control-label"></label>
+                <input asp-for="Contraseña" id="contraseña" class="form-control" />
+                <span asp-validation-for="Contraseña" id="pContraseña" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" id="nombre" class="form-control" />
+                <span asp-validation-for="Nombre" id="pNombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Apellido" class="control-label"></label>
+                <input asp-for="Apellido" id="apellido" class="form-control" />
+                <span asp-validation-for="Apellido" id="pApellido" class="text-danger"></span>
+            <div class="form-group">
+                 <label asp-for="Rol" class="control-label"></label>
+                  <select asp-for="Rol" class="form-control">
+                      <option value="Administrador">Administrador</option>
+                      <option value="Usuario">Usuario</option>
+                  </select>
+                <span asp-validation-for="Rol" class="text-danger"></span>
+            </div>
+
+            <div class="form-group text-center mt-3">
+                    <input type="button" value="Registrase" class="btn btn-primary" onclick="validarFormulario();"  />
+                <a class="btn btn-primary" href="@Url.Action("Login","Usuario")">Iniciar Sesion</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    function validarFormulario() {
+        let email = document.getElementById('email').value;
+        let contraseña = document.getElementById('contraseña').value;
+        let nombre = document.getElementById('nombre').value;
+        let apellido = document.getElementById('apellido').value;
+        @{
+            string formato = @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*";
+        }
+            let regex = new RegExp('@formato');
+        if (email.length < 1) {
+            let pEmail = document.getElementById('pEmail');
+            pEmail.textContent = "El email no puede estar vacio";
+        }
+        if (!regex.test(email)) {
+            pEmail.textContent = "El email debe tener el formato correcto";
+        }
+        if (contraseña.length < 5) {
+            let pContraseña = document.getElementById('pContraseña');
+            pContraseña.textContent = "La contraseña no puede estar vacia y debe tener minimo 5 caracteres";
+        }
+        if (nombre.length < 5) {
+            let pNombre = document.getElementById('pNombre');
+            pNombre.textContent = "El nombre no puede estar vacio y debe tener minimo 5 caracteres";
+        }
+        if (apellido.length < 5) {
+            let pApellido = document.getElementById('pApellido');
+            pApellido.textContent = "El apellido no puede estar vacio y debe tener minimo 5 caracteres";
+        }
+        else {
+            document.getElementById('signInForm').submit();
+            return true;
+        }
+    }
+</script>

@@ -7,6 +7,7 @@ using MVC.Models;
 using MVC.Models.ViewModels;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Net.WebSockets;
 using System.Threading;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -111,7 +112,34 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
+        public ActionResult Alquilar(int id) //OK
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                CabañaViewModel buscado = null;
+                HttpClient cliente = new HttpClient();
+                string url = URLBaseApiCabañas + id;
+                Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
+                tarea1.Wait();
 
+                string jsonBody = LeerContenido(tarea1.Result);
+
+                if (tarea1.Result.IsSuccessStatusCode)
+                {
+                    buscado = JsonConvert.DeserializeObject<CabañaViewModel>(jsonBody);
+                    return View(buscado);
+                }
+                else
+                {
+                    ViewBag.Mensaje = jsonBody;
+                    return View();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
         // GET: CabañaController/Create
         public ActionResult Create() //OK
         {
@@ -368,7 +396,7 @@ namespace MVC.Controllers
         }
 
 
-    public ActionResult ListarPorTipoYMonto()
+        public ActionResult ListarPorMonto()
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
@@ -382,7 +410,7 @@ namespace MVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ListarPorTipoYMonto(int monto )
+        public IActionResult ListarPorMonto(int monto )
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
@@ -416,9 +444,56 @@ namespace MVC.Controllers
             }
         }
 
-
-
-
+        public ActionResult ListarDisponiblesEnRangoFechas()
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                return View();
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
+        //[ValidateAntiForgeryToken] 
+        [HttpPost]
+        public ActionResult ListarDisponiblesEnRangoFechas(DateTime fDesde, DateTime fHasta)
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                if (fDesde != null && fHasta != null && fDesde <= fHasta)
+                {
+                    HttpClient client = new HttpClient();
+                    string url = URLBaseApiCabañas + "desde/" + fDesde.ToString("yyyy-MM-dd") + "/hasta" + fHasta.ToString("yyyy-MM-dd");
+                    var tarea1 = client.GetAsync(url);
+                    tarea1.Wait(); 
+                    string json = LeerContenido(tarea1.Result);
+                    if (tarea1.Result.IsSuccessStatusCode)
+                    {
+                        List<CabañaViewModel> cabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
+                        if (!cabañas.Any())
+                        {
+                            ViewBag.Mensaje = "No hay cabañas dis";
+                        }
+                        return View(cabañas);
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = json;
+                        return View();
+                    }
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Se debe ingresar la fecha de inicio y la fecha final para la busqueda ademas la fecha inicial debe ser menor a la final";
+                    return View();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
 
     }
 }

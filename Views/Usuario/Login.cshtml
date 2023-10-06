@@ -1,13 +1,14 @@
-﻿@model MVC.Models.ViewModels.UsuarioViewModel
+﻿using System.Text.RegularExpressions;
+@model MVC.Models.ViewModels.UsuarioLoginViewModel
 
 @{
     ViewData["Title"] = "Login";
 }
     <p>
         credentials:<br />
-        german@gmail.com	German123 <br/>
-        usuario@gmail.com	Usuario123 <br />
-        admin@gmail.com	Admin123
+        german@gmail.com	german123 <br/>
+        usuario@gmail.com	usuario123 <br />
+        admin@gmail.com	admin123
     </p>
 <div class="d-flex justify-content-center align-items-center">
 <h1>Login</h1>
@@ -16,23 +17,50 @@
 <hr />
 <div class="d-flex justify-content-center align-items-center">
     <div class="col-md-4">
-        <form asp-action="Login" class="p-3 border rounded">
+        <form id="loginForm" asp-action="Login" class="p-3 border rounded">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label">Email:</label>
-                <input asp-for="Email" class="form-control" placeholder="Ingrese Email">
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <input asp-for="Email" id="email" class="form-control" placeholder="Ingrese Email" value="german@gmail.com" name="email">
+                <span asp-validation-for="Email" id="pEmail" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Contraseña" class="control-label">Contraseña:</label>
-                <input asp-for="Contraseña" type="password" class="form-control" placeholder="Ingrese Contraseña">
-                <span asp-validation-for="Contraseña" class="text-danger"></span>
+                <input asp-for="Contraseña" id="contraseña" type="password" class="form-control" placeholder="Ingrese Contraseña" value="german123" name="contraseña">
+                <span asp-validation-for="Contraseña" id="pContraseña" class="text-danger"></span>
             </div>
             <div class="form-group text-center">
-                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="button" class="btn btn-primary" onclick="validarFormulario();">Iniciar Sesion</button>
+                <a class="btn btn-primary" href="@Url.Action("SignIn","Usuario")">Registrarse</a>
             </div>
         </form>
 
     </div>
 </div>
+
+<script type="text/javascript">
+        function validarFormulario() {
+            let email = document.getElementById('email').value;
+            let contraseña = document.getElementById('contraseña').value;
+            @{
+                string formato = @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*";
+            }
+            let regex = new RegExp('@formato');
+            if(email.length<1){
+                let pEmail = document.getElementById('pEmail');
+                pEmail.textContent="El email no puede estar vacio";
+            }
+            if (!regex.test(email)){
+                pEmail.textContent = "El email debe tener el formato correcto";
+            }
+            if (contraseña.length < 5){
+                let pContraseña = document.getElementById('pContraseña');
+                pContraseña.textContent = "La contraseña no puede estar vacia y debe tener minimo 5 caracteres";
+            }
+            else{
+                document.getElementById('loginForm').submit();
+                return true;
+            }
+        }
+    </script>
 
