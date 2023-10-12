@@ -1,0 +1,72 @@
+﻿@using MVC.Models.ViewModels.Cabaña;
+@model IEnumerable<CabañaViewModel>
+
+@{
+    ViewData["Title"] = "ListarCabañasPropias";
+}
+
+<h1>List My Cabins</h1>
+<p>@ViewBag.Mensaje</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Photo
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Has Jacuzzi
+            </th>
+            <th>
+                Enabled
+            </th>
+            <th>
+                Maxium Guests
+            </th>
+            <th>
+                Daily Price
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+        @foreach (var item in Model) {
+        <tr>
+                <td>
+                    <img src="/Imagenes/@item.Foto" height="120" />
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PoseeJacuzzi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstaHabilitada)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CantidadPersonasMax)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioDiario)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit","Cabaña", new {  id=item.NumeroHabitacion  }) |
+                    @Html.ActionLink("Details", "Details","Cabaña", new {  id=item.NumeroHabitacion  }) 
+
+            </td>
+        </tr>
+            }   }
+    </tbody>
+</table>
+        

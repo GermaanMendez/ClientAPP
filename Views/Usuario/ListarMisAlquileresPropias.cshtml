@@ -1,0 +1,70 @@
+﻿@using MVC.Models.ViewModels.Alquiler;
+@model IEnumerable<AlquilerCabañaViewModel>
+
+@{
+    ViewData["Title"] = "ListarMisAlquileresPropias";
+}
+
+<h1>My Rents</h1>
+
+<p>@ViewBag.Mensaje</p>
+
+@if (TempData["Mensaje"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["Mensaje"]
+    </div>
+    TempData["Mensaje"] = null;
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Date From
+            </th>
+            <th>
+                Date Until
+            </th>
+            <th>
+                Total Price
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Owner
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaAlquilerDesde)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaAlquilerHasta)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Precio)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cabaña.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cabaña.Usuario.Nombre)  @Html.DisplayFor(modelItem => item.Cabaña.Usuario.Apellido)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Delete", "Delete","AlquilerCabaña", new {  id=item.Id })
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

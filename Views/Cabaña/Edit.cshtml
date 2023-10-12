@@ -1,0 +1,77 @@
+﻿@using MVC.Models.ViewModels.Cabaña;
+@model CabañaViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>CabañaViewModel</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="Cabaña" asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="NumeroHabitacion" class="control-label" ></label>
+                <input asp-for="NumeroHabitacion" class="form-control" name="NumeroHabitacion" readonly />
+                <span asp-validation-for="NumeroHabitacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Nombre" class="control-label"></label>
+                <input asp-for="Nombre" class="form-control" name="Nombre"/>
+                <span asp-validation-for="Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="Foto" class="control-label"></label>*@
+                <input asp-for="Foto" class="form-control" name="Foto" readonly  type="hidden"/>
+                <span asp-validation-for="Foto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" name="Descripcion"/>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="PoseeJacuzzi" name="PoseeJacuzzi"/> @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+                </label>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="EstaHabilitada" name="EstaHabilitada"/> @Html.DisplayNameFor(model => model.EstaHabilitada)
+                </label>
+            </div>
+            <div class="form-group">
+                <label asp-for="CantidadPersonasMax" class="control-label"></label>
+                <input asp-for="CantidadPersonasMax" class="form-control" name="CantidadPersonasMax" />
+                <span asp-validation-for="CantidadPersonasMax" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PrecioDiario" class="control-label"></label>
+                <input asp-for="PrecioDiario" class="form-control" name="PrecioDiario"/>
+                <span asp-validation-for="PrecioDiario" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @*<label asp-for="IdTipoCabaña" class="control-label"></label>*@
+                <input asp-for="IdTipoCabaña" class="form-control" name="IdTipoCabaña" readonly type="hidden"/>
+                <span asp-validation-for="IdTipoCabaña" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="hidden" asp-for="TipoCabaña" class="form-control" name="TipoCabaña" />
+                <span asp-validation-for="TipoCabaña" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" asp-action="Edit" formmethod="post"/>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+

@@ -1,15 +1,12 @@
 ﻿
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Primitives;
-using MVC.Models;
 using MVC.Models.ViewModels;
+using MVC.Models.ViewModels.Cabaña;
+using MVC.Models.ViewModels.Usuario;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
-using System.Net.WebSockets;
-using System.Threading;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Text.Json.Nodes;
+using MVC.CommonRequest.Interfaces;
 
 namespace MVC.Controllers
 {
@@ -19,41 +16,50 @@ namespace MVC.Controllers
         public string URLBaseApiTiposCabañas { get; set; }
         public string URLBaseApiMantenimientos { get; set; }
         public string URLBaseUsuarios { get; set; } 
+        public string URLBaseAlquileres { get; set; }
 
         public IWebHostEnvironment WHE { get; set; }
-        public CabañaController(IWebHostEnvironment wheParam, IConfiguration conf)
+        public ILeerContenidoBodyApi CU_LeerContenido { get; set; }
+        public IObtenerTiposCabañas CU_ObtenerTipos { get; set; }
+        public IObtenerUsuarioLogueado CU_ObtenerUsuarioLogueado { get; set; }
+        public IObtenerCabañaPorId CU_ObtenerCabañaPorId { get; set; }
+        public IObtenerTipoCabañaPorId CU_ObtenerTipoCabañaPorId { get; set; }
+        public CabañaController(IWebHostEnvironment wheParam, IConfiguration conf, ILeerContenidoBodyApi cuLeer, IObtenerTiposCabañas cuObtenerTipos,IObtenerUsuarioLogueado cuObtenerUsuario,IObtenerCabañaPorId cuObtenerCabañaId,IObtenerTipoCabañaPorId cuObtenerTipoId)
         {
             URLBaseApiCabañas = conf.GetValue<string>("ApiCabañas");
             URLBaseApiTiposCabañas = conf.GetValue<string>("ApiTipoCabañas");
             URLBaseApiMantenimientos = conf.GetValue<string>("ApiMantenimientos");
             URLBaseUsuarios = conf.GetValue<string>("ApiUsuarios");
+            URLBaseAlquileres = conf.GetValue<string>("ApiAlquileres");
             WHE = wheParam;
+            CU_LeerContenido= cuLeer;
+            CU_ObtenerTipos= cuObtenerTipos;
+            CU_ObtenerUsuarioLogueado = cuObtenerUsuario;
+            CU_ObtenerCabañaPorId = cuObtenerCabañaId;
+            CU_ObtenerTipoCabañaPorId= cuObtenerTipoId;
         }
-        private string LeerContenido(HttpResponseMessage respuesta)
-        {
-            HttpContent contenido = respuesta.Content;
-            Task<string> tarea2 = contenido.ReadAsStringAsync();
-            tarea2.Wait();
-            string bodyContenido = tarea2.Result;  
-            return bodyContenido;
-        }
-        private List<TipoCabañaViewModel> ObtenerTiposCabañas()
-        {
-            HttpClient cliente = new HttpClient();
-            string url = URLBaseApiTiposCabañas;
-            Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
-            tarea1.Wait();
-            HttpResponseMessage respuesta = tarea1.Result;
-            if (respuesta.IsSuccessStatusCode)
-            {
-            string bodyContenido = LeerContenido(respuesta);
-                return JsonConvert.DeserializeObject<List<TipoCabañaViewModel>>(bodyContenido);
-            }
-            else
-            {
-                return null;
-            }
-        }
+        
+
+        //private UsuarioViewModel ObtenerUsuarioLogueado()
+        //{
+        //    HttpClient cliente = new HttpClient();
+        //    string email = HttpContext.Session.GetString("usuarioLogueadoMail");
+        //    string emailConverted = "$"+email.Replace("@", "%40");
+        //    string url = URLBaseUsuarios + "Usuario/" + emailConverted;
+        //    Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
+        //    tarea1.Wait();
+        //    HttpResponseMessage respuesta = tarea1.Result;
+        //    string bodyContenido = CU_LeerContenido.LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(bodyContenido);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+        
 
         // GET: CabañaController
         public ActionResult Index() //OK
@@ -65,16 +71,23 @@ namespace MVC.Controllers
                 Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
                 tarea1.Wait();
                 HttpResponseMessage respuesta = tarea1.Result;
-                string bodyContenido = LeerContenido(respuesta);
+                string bodyContenido = CU_LeerContenido.LeerContenido(respuesta);
                 if (respuesta.IsSuccessStatusCode)
                 {
+                    MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                    cabañasViewModel.rolUsuarioLogueado= HttpContext.Session.GetString("usuarioLogueadoRol");
                     List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(bodyContenido);
-                    return View(listaCabañas);
+                    cabañasViewModel.cabañas = listaCabañas;
+
+                    return View(cabañasViewModel);
                 }
                 else
                 {
+                    MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                    cabañasViewModel.rolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                    cabañasViewModel.cabañas = new List<CabañaViewModel>();
                     ViewBag.Mensaje = bodyContenido;
-                    return View(new List<CabañaViewModel>());
+                    return View(cabañasViewModel);
                 }
             }
             else
@@ -94,7 +107,7 @@ namespace MVC.Controllers
                 Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
                 tarea1.Wait();
 
-                string jsonBody = LeerContenido(tarea1.Result);
+                string jsonBody = CU_LeerContenido.LeerContenido(tarea1.Result);
 
                 if (tarea1.Result.IsSuccessStatusCode)
                 {
@@ -112,26 +125,18 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        public ActionResult Alquilar(int id) //OK
+        public ActionResult Edit(int id)
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
-                CabañaViewModel buscado = null;
-                HttpClient cliente = new HttpClient();
-                string url = URLBaseApiCabañas + id;
-                Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
-                tarea1.Wait();
-
-                string jsonBody = LeerContenido(tarea1.Result);
-
-                if (tarea1.Result.IsSuccessStatusCode)
+                CabañaViewModel aEditar = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(id);
+                if (aEditar != null)
                 {
-                    buscado = JsonConvert.DeserializeObject<CabañaViewModel>(jsonBody);
-                    return View(buscado);
+                    return View(aEditar);
                 }
                 else
                 {
-                    ViewBag.Mensaje = jsonBody;
+                    ViewBag.Mensaje = "Error";
                     return View();
                 }
             }
@@ -140,16 +145,157 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        // GET: CabañaController/Create
-        public ActionResult Create() //OK
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(CabañaViewModel cabañaVM)
         {
-            if (HttpContext.Session.GetString("usuarioLogueadoMail") == null || HttpContext.Session.GetString("token")==null)
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
-                return RedirectToAction("Login", "Usuario");
+                string emailUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoMail").ToLower();
+                string emailConverted =  emailUsuarioLogueado.Replace("@", "%40");
+                UsuarioViewModel usario = CU_ObtenerUsuarioLogueado.ObtenerUsuarioLogueadoApi(emailUsuarioLogueado);
+                TipoCabañaViewModel tipo = CU_ObtenerTipoCabañaPorId.ObtenerTipoCabañaPorIdApi(cabañaVM.IdTipoCabaña);
+                cabañaVM.Usuario = usario;
+                cabañaVM.TipoCabaña= tipo;
+                    HttpClient cliente = new HttpClient();
+                    string url = URLBaseApiCabañas +"edit/"+ emailConverted;
+                    cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+
+                    var tarea1 = cliente.PutAsJsonAsync(url, cabañaVM);
+                    tarea1.Wait();
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
+
+                    if (tarea1.Result.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = json;
+                        return View();
+                    }
             }
             else
             {
-                List<TipoCabañaViewModel> tipos = ObtenerTiposCabañas();
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
+        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
+        //{
+        //    HttpClient cliente = new HttpClient();
+        //    string url = URLBaseApiCabañas + NumeroHabitacion;
+        //    var tarea1 = cliente.GetAsync(url);
+        //    tarea1.Wait();
+        //    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
+        //    if (tarea1.Result.IsSuccessStatusCode)
+        //    {
+        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
+        //        return buscada;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int numeroHabitacion)
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
+            {
+                HttpClient client = new HttpClient();
+                string email = HttpContext.Session.GetString("usuarioLogueadoMail");
+                string url = URLBaseApiCabañas + email + "+" +numeroHabitacion;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var tarea1 = client.DeleteAsync(url);
+                tarea1.Wait();
+                var respuesta = tarea1.Result;
+                string json = CU_LeerContenido.LeerContenido(respuesta);
+                if (tarea1.Result.IsSuccessStatusCode)
+                {
+                    TempData["Mensaje"] = "Eliminado con exito";
+                    return RedirectToAction("ListarCabañasPropias", "Usuario");
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Error: " + json;
+                    return RedirectToAction("Details", "Cabaña", new {id=numeroHabitacion});
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
+
+        //private CabañaViewModel ObtenerCabañaPorId(int id)
+        //{
+        //    HttpClient client = new HttpClient();
+        //    string url = URLBaseApiCabañas + id;
+        //    var tarea1 = client.GetAsync(url);
+        //    tarea1.Wait();
+        //    var respuesta = tarea1.Result;
+        //    string json = CU_LeerContenido.LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<CabañaViewModel>(json);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+        //private TipoCabañaViewModel ObtenerTipoCabañaPorId(int id)
+        //{
+        //    HttpClient client = new HttpClient();
+        //    string url = URLBaseApiTiposCabañas + id;
+        //    var tarea1 = client.GetAsync(url);
+        //    tarea1.Wait();
+        //    var respuesta = tarea1.Result;
+        //    string json = CU_LeerContenido.LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<TipoCabañaViewModel>(json);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        //private UsuarioViewModel ObtenerUsuarioCabañaPorEmail(string email)
+        //{
+        //    HttpClient client = new HttpClient();
+        //    string url = URLBaseUsuarios + "Usuario/" +"$"+ email;
+        //    var tarea1 = client.GetAsync(url);
+        //    tarea1.Wait();
+        //    var respuesta = tarea1.Result;
+        //    string json = CU_LeerContenido.LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(json);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+        public ActionResult Create() //OK
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") == null || HttpContext.Session.GetString("token") == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+            else if (HttpContext.Session.GetString("usuarioLogueadoRol") != "usuario")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                List<TipoCabañaViewModel> tipos = CU_ObtenerTipos.ObtenerTiposCabañasApi();
                 if (tipos!=null)
                 {
                     AltaCabañaViewModel av= new AltaCabañaViewModel();
@@ -171,38 +317,44 @@ namespace MVC.Controllers
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
             {
-                FileInfo fi = new FileInfo(vm.Foto.FileName);
-                string Extension = fi.Extension;
-                string nomArchivoFoto = vm.Cabaña.Nombre + Extension;
-                if (nomArchivoFoto.Contains(" "))
-                {
-                    nomArchivoFoto = nomArchivoFoto.Replace(" ", "_");
-                }
-                string nom = nomArchivoFoto;
-                vm.Cabaña.Foto = nomArchivoFoto;
-                vm.Cabaña.IdTipoCabaña = vm.IdTipoCabaña;
+                if (HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario"){
+                    FileInfo fi = new FileInfo(vm.Foto.FileName);
+                    string Extension = fi.Extension;
+                    string nomArchivoFoto = vm.Cabaña.Nombre + Extension;
+                    if (nomArchivoFoto.Contains(" "))
+                    {
+                        nomArchivoFoto = nomArchivoFoto.Replace(" ", "_");
+                    }
+                    string nom = nomArchivoFoto;
+                    vm.Cabaña.Foto = nomArchivoFoto;
+                    vm.Cabaña.IdTipoCabaña = vm.IdTipoCabaña;
+                    vm.Cabaña.Usuario = CU_ObtenerUsuarioLogueado.ObtenerUsuarioLogueadoApi(HttpContext.Session.GetString("usuarioLogueadoMail"));
+                    HttpClient cliente = new HttpClient();
+                    string url = URLBaseApiCabañas;
+                    cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
-                HttpClient cliente = new HttpClient();
-                string url = URLBaseApiCabañas;
-                cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
-
-                var tarea = cliente.PostAsJsonAsync(url, vm.Cabaña);
-                tarea.Wait();
-                if (tarea.Result.IsSuccessStatusCode)
+                    var tarea = cliente.PostAsJsonAsync(url, vm.Cabaña);
+                    tarea.Wait();
+                    if (tarea.Result.IsSuccessStatusCode)
+                    {
+                        string rutaWwwRoot = WHE.WebRootPath;
+                        string rutaCarpeta = Path.Combine(rutaWwwRoot, "Imagenes");
+                        string rutaArchivo = Path.Combine(rutaCarpeta, nomArchivoFoto);
+                        FileStream fs = new FileStream(rutaArchivo, FileMode.Create);
+                        vm.Foto.CopyTo(fs);
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        fi = null;
+                        List<TipoCabañaViewModel> tipos = CU_ObtenerTipos.ObtenerTiposCabañasApi();
+                        ViewBag.Mensaje = CU_LeerContenido.LeerContenido(tarea.Result);
+                        vm.TiposCabañas = tipos;
+                        return View(vm);
+                    }
+                } else
                 {
-                    string rutaWwwRoot = WHE.WebRootPath;
-                    string rutaCarpeta = Path.Combine(rutaWwwRoot, "Imagenes");
-                    string rutaArchivo = Path.Combine(rutaCarpeta, nomArchivoFoto);
-                    FileStream fs = new FileStream(rutaArchivo, FileMode.Create);
-                    vm.Foto.CopyTo(fs);
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    List<TipoCabañaViewModel> tipos = ObtenerTiposCabañas();
-                    ViewBag.Mensaje = LeerContenido(tarea.Result);
-                    vm.TiposCabañas = tipos;
-                    return View(vm);
+                    return RedirectToAction("Index", "Home");
                 }
             }
             else
@@ -239,12 +391,15 @@ namespace MVC.Controllers
                     string url = URLBaseApiCabañas + "texto/" + texto;
                     Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
                     tarea1.Wait();
-                    string jsonBody = LeerContenido(tarea1.Result);
+                    string jsonBody = CU_LeerContenido.LeerContenido(tarea1.Result);
 
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
+                        MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                        cabañasViewModel.rolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
                         List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(jsonBody);
-                        return View(listaCabañas);
+                        cabañasViewModel.cabañas = listaCabañas;
+                        return View(cabañasViewModel);
                     }
                     else
                     {
@@ -269,7 +424,13 @@ namespace MVC.Controllers
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
                 var viewModel = new BuscarPorTipoViewModel();
-                viewModel.TiposCabañas = ObtenerTiposCabañas();
+                viewModel.RolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                viewModel.TiposCabañas = CU_ObtenerTipos.ObtenerTiposCabañasApi();
+                if (viewModel.TiposCabañas == null)
+                {
+                    ViewBag.Mesaje = "There is not any type of cabin in the system";
+                    return RedirectToAction("Index", "Home");
+                }
                 return View(viewModel);
             }
             else
@@ -291,26 +452,27 @@ namespace MVC.Controllers
                         string url = URLBaseApiCabañas + "tipo/" + viewModel.IdTipoCabaña;
                         Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
                         tarea1.Wait();
-                        string jsonBody = LeerContenido(tarea1.Result);
+                        string jsonBody = CU_LeerContenido.LeerContenido(tarea1.Result);
 
                         if (tarea1.Result.IsSuccessStatusCode)
                         {
                             List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(jsonBody);
                             ViewBag.Cabañas = listaCabañas;
-                            viewModel.TiposCabañas = ObtenerTiposCabañas();
-                            return View(viewModel);
+                            viewModel.RolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                            viewModel.TiposCabañas = CU_ObtenerTipos.ObtenerTiposCabañasApi();
+                        return View(viewModel);
                         }
                         else
                         {
                             ViewBag.Mensaje = jsonBody;
-                            viewModel.TiposCabañas = ObtenerTiposCabañas();
-                            return View(viewModel);
+                            viewModel.TiposCabañas = CU_ObtenerTipos.ObtenerTiposCabañasApi();
+                        return View(viewModel);
                         }
                 }
                 else
                 {
                     ViewBag.Mensaje = "You must select a type to search";
-                    viewModel.TiposCabañas = ObtenerTiposCabañas();
+                    viewModel.TiposCabañas = CU_ObtenerTipos.ObtenerTiposCabañasApi();
                     return View(viewModel);
                 }
             }
@@ -344,11 +506,14 @@ namespace MVC.Controllers
                         string url = URLBaseApiCabañas + "cantidadPersonas/" + numero;
                         Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
                         tarea1.Wait();
-                        string jsonBody = LeerContenido(tarea1.Result);
+                        string jsonBody = CU_LeerContenido.LeerContenido(tarea1.Result);
                         if (tarea1.Result.IsSuccessStatusCode)
                         {
-                            List<CabañaViewModel> cabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(jsonBody);
-                            return View(cabañas);
+                            MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                            cabañasViewModel.rolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                            List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(jsonBody);
+                            cabañasViewModel.cabañas = listaCabañas;
+                            return View(cabañasViewModel);
                         }
                         else
                         {
@@ -369,15 +534,15 @@ namespace MVC.Controllers
         }
 
 
-        public ActionResult ListarSoloHabilitadas()
+        public ActionResult ListarNOHabilitadas()
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
                 HttpClient client = new HttpClient();
-                string url = URLBaseApiCabañas + "Habilitadas";
+                string url = URLBaseApiCabañas + "NOHabilitadas";
                 var tarea1 = client.GetAsync(url);
                 tarea1.Wait();
-                string json = LeerContenido(tarea1.Result);
+                string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                 if (tarea1.Result.IsSuccessStatusCode)
                 {
                     List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
@@ -420,11 +585,14 @@ namespace MVC.Controllers
                     string url = URLBaseApiCabañas + "Monto/" + monto; 
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
-                        List<CabañaViewModel> cabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
-                        return View(cabañas);
+                        MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                        cabañasViewModel.rolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                        List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
+                        cabañasViewModel.cabañas = listaCabañas;
+                        return View(cabañasViewModel);
                     }
                     else
                     {
@@ -467,15 +635,14 @@ namespace MVC.Controllers
                     string url = URLBaseApiCabañas + "desde/" + fDesde.ToString("yyyy-MM-dd") + "/hasta" + fHasta.ToString("yyyy-MM-dd");
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait(); 
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
-                        List<CabañaViewModel> cabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
-                        if (!cabañas.Any())
-                        {
-                            ViewBag.Mensaje = "No hay cabañas dis";
-                        }
-                        return View(cabañas);
+                        MostrarListaCabañasRolViewModel cabañasViewModel = new MostrarListaCabañasRolViewModel();
+                        cabañasViewModel.rolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
+                        List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(json);
+                        cabañasViewModel.cabañas = listaCabañas;
+                        return View(cabañasViewModel);
                     }
                     else
                     {
@@ -487,6 +654,61 @@ namespace MVC.Controllers
                 {
                     ViewBag.Mensaje = "Se debe ingresar la fecha de inicio y la fecha final para la busqueda ademas la fecha inicial debe ser menor a la final";
                     return View();
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
+
+        //[ValidateAntiForgeryToken] 
+        [HttpPost]
+        public ActionResult DeshabilitarCabaña (int idCabaña)
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                    HttpClient client = new HttpClient();
+                    string email = HttpContext.Session.GetString("usuarioLogueadoMail").Replace("@", "%40").ToLower();
+                    string url = URLBaseApiCabañas + "deshabilitar/" + email + "/" + idCabaña;
+                    var tarea1 = client.PostAsync(url,null);
+                    tarea1.Wait();
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
+                    if (tarea1.Result.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("Index", "Cabaña");
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = json;
+                        return RedirectToAction("Index", "Cabaña");
+                    }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult HabilitarCabaña(int idCabaña)
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                HttpClient client = new HttpClient();
+                string email = HttpContext.Session.GetString("usuarioLogueadoMail").Replace("@", "%40").ToLower();
+                string url = URLBaseApiCabañas + "habilitar/" + email + "/" + idCabaña;
+                var tarea1 = client.PostAsync(url,null);
+                tarea1.Wait();
+                string json = CU_LeerContenido.LeerContenido(tarea1.Result);
+                if (tarea1.Result.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("ListarNOHabilitadas", "Cabaña");
+                }
+                else
+                {
+                    ViewBag.Mensaje = json;
+                    return RedirectToAction("ListarNOHabilitadas", "Cabaña");
                 }
             }
             else

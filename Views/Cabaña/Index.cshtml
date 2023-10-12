@@ -1,48 +1,42 @@
-﻿@using MVC.Models.ViewModels
-@model IEnumerable<CabañaViewModel>
+﻿
+@using MVC.Models.ViewModels.Cabaña
+@model MostrarListaCabañasRolViewModel
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>List of Cabins in the system.</h1>
-<p>@ViewBag.Mensaje</p>
-<p>
-    <input type="submit" class="btn-success"asp-action="Create"  value=" Crear nueva"/>
-</p>
+<h1>List Of Cabins To Rent.</h1>
 
 <div>@ViewBag.Mensaje</div>
-@if (Model != null)
+@if (Model != null && Model.cabañas.Count>0)
 {
     <table class="table">
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Nombre)
+                    Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Descripcion)
+                    Description
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+                    Has a Jacuzzi
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.EstaHabilitada)
+                    Maxium Guests
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CantidadPersonasMax)
+                    Photo
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Foto)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TipoCabaña.Nombre)
+                    Type Of Cabin
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.cabañas)
             {
                 <tr>
                     <td>
@@ -55,9 +49,6 @@
                         @Html.DisplayFor(modelItem => item.PoseeJacuzzi)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.EstaHabilitada)
-                    </td>
-                    <td>
                         @Html.DisplayFor(modelItem => item.CantidadPersonasMax)
                     </td>
                     <td>
@@ -67,19 +58,31 @@
                         @Html.DisplayFor(modelItem => item.TipoCabaña.Nombre)
                     </td>
                     <td>
-                        @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
-                        @Html.ActionLink("Alquilar", "Alquilar", new {  id=item.NumeroHabitacion  })
-                        @* @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                        @if (Model.rolUsuarioLogueado == "usuario")
+                        {
+                            @Html.ActionLink("Rent", "Create","AlquilerCabaña", new {  id=item.NumeroHabitacion  })
+                        }
+                        @if (Model.rolUsuarioLogueado == "administrador")
+                        {
+                            <td>
+                                @using (Html.BeginForm("Details", "Cabaña", new { id = item.NumeroHabitacion }, FormMethod.Get))
+                                {
+                                <button type="submit" class="btn btn-primary btn-md ">Details</button>
+                                }
+                                @using (Html.BeginForm("DeshabilitarCabaña", "Cabaña", new { idCabaña = item.NumeroHabitacion }, FormMethod.Post))
+                                {
+                                    <button type="submit" class="btn btn-danger btn-md mt-2 ">Disable</button>
+                                }
+
+                            </td>
+                        }
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 }
-else
-{
-    <h1>We don't have cabins in the system',<a asp-action="Create">create</a> one or return to the index. </h1>
-}
+
 
 
 

@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.Extensions.Configuration;
-using MVC.Models.ViewModels;
+using MVC.CommonRequest.Interfaces;
+using MVC.Models.ViewModels.Alquiler;
+using MVC.Models.ViewModels.Cabaña;
+using MVC.Models.ViewModels.Usuario;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
 
@@ -13,11 +16,26 @@ namespace MVC.Controllers
     {
         public IConfiguration Conf { get; set; }
         public string URLBaseApiUsuarios { get; set; }
-        public UsuarioController( IConfiguration cn)
+        public string URLBaseApiCabañas { get; set; }
+        public ILeerContenidoBodyApi CU_LeerContenidoBody { get; set; }
+        public UsuarioController( IConfiguration cn, ILeerContenidoBodyApi cuLeerContenidoBody)
         {
             Conf = cn;
             URLBaseApiUsuarios = Conf.GetValue<string>("ApiUsuarios");
+            URLBaseApiCabañas = Conf.GetValue<string>("ApiCabañas");
+            CU_LeerContenidoBody=cuLeerContenidoBody;
         }
+
+
+        //private string LeerContenido(HttpResponseMessage respuesta)
+        //{
+        //    HttpContent contenido = respuesta.Content;
+        //    Task<string> tarea2 = contenido.ReadAsStringAsync();
+        //    tarea2.Wait();
+        //    string bodyContenido = tarea2.Result;
+        //    return bodyContenido;
+        //}
+
         [HttpGet]
         public IActionResult Login()
         {
@@ -48,8 +66,8 @@ namespace MVC.Controllers
 
                 var loginData = JsonConvert.DeserializeAnonymousType(tarea2.Result, new { Token = "", Rol = "" });
                 HttpContext.Session.SetString("token", loginData.Token);
-                HttpContext.Session.SetString("usuarioLogueadoMail", usu.Email);
-                HttpContext.Session.SetString("usuarioLogueadoRol", loginData.Rol);
+                HttpContext.Session.SetString("usuarioLogueadoMail", usu.Email.ToLower());
+                HttpContext.Session.SetString("usuarioLogueadoRol", loginData.Rol.ToLower());
    
                 return RedirectToAction("Index", "Home");
             }
@@ -83,6 +101,7 @@ namespace MVC.Controllers
         [HttpPost]
         public IActionResult SignIn(UsuarioViewModel usu)
         {
+            usu.Rol = "usuario";
             HttpClient client = new HttpClient();
             string url = URLBaseApiUsuarios + "Registro";
             var tarea = client.PostAsJsonAsync(url, usu);
@@ -107,20 +126,6 @@ namespace MVC.Controllers
             }
         }
 
-
-        public IActionResult Logout()
-        {
-            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
-            {
-                return View();
-            }
-            else
-            {
-                return RedirectToAction("Index", "Home");
-            }
-        }
-
-
         [HttpPost]
         public IActionResult Logout(string n)
         {
@@ -129,11 +134,81 @@ namespace MVC.Controllers
         }
 
 
+        [HttpGet]
+        public IActionResult ListarCabañasPropias()
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                if (HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario")
+                {
+                    HttpClient client = new HttpClient();
+                    string email = HttpContext.Session.GetString("usuarioLogueadoMail");
+                    string emailConverted = "$" + email.Replace("@", "%40");
+                    string url = URLBaseApiUsuarios + "Listadas/" + emailConverted;
+                    var tarea = client.GetAsync(url);
+                    tarea.Wait();
+                    var respuesta = tarea.Result;
+                    string contentBody = CU_LeerContenidoBody.LeerContenido(respuesta);
+                    if (respuesta.IsSuccessStatusCode)
+                    {
+                        List<CabañaViewModel> listaCabañas = JsonConvert.DeserializeObject<List<CabañaViewModel>>(contentBody);
+                        return View(listaCabañas);
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = contentBody;
+                        return View();
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
 
+        [HttpGet]
+        public IActionResult ListarMisAlquileresPropias()
+        {
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
+            {
+                if (HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario")
+                {
+                    HttpClient client = new HttpClient();
+                    string email = HttpContext.Session.GetString("usuarioLogueadoMail"); 
+                    string emailConverted = email.Replace("@", "%40");
+                    string url = URLBaseApiUsuarios + "alquileresUsuario/" + emailConverted;
+                    var tarea = client.GetAsync(url);
+                    tarea.Wait();
+                    var respuesta = tarea.Result;
+                    string contentBody = CU_LeerContenidoBody.LeerContenido(respuesta);
+                    if (respuesta.IsSuccessStatusCode)
+                    {
+                        List<AlquilerCabañaViewModel> listaAlquileres = JsonConvert.DeserializeObject<List<AlquilerCabañaViewModel>>(contentBody);
+                        return View(listaAlquileres);
+                    }
+                    else
+                    {
+                        ViewBag.Mensaje = contentBody;
+                        return View();
+                    }
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+        }
 
-
-
-
+        
 
     }
  }

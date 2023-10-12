@@ -1,8 +1,10 @@
 ﻿
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MVC.CommonRequest.Interfaces;
 using MVC.Models;
-using MVC.Models.ViewModels;
+using MVC.Models.ViewModels.Cabaña;
+using MVC.Models.ViewModels.Mantenimiento;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 
@@ -16,23 +18,20 @@ namespace MVC.Controllers
         public string URLBaseUsuarios { get; set; }
 
         public IWebHostEnvironment WHE { get; set; }
-        public MantenimientoController(IWebHostEnvironment wheParam, IConfiguration conf)
+        public ILeerContenidoBodyApi CU_LeerContenido { get; set; }
+        public IObtenerCabañaPorId CU_ObtenerCabañaPorId { get; set; }
+        public MantenimientoController(IWebHostEnvironment wheParam, IConfiguration conf, ILeerContenidoBodyApi cuLeer, IObtenerCabañaPorId cU_ObtenerCabañaPorId)
         {
             URLBaseApiCabañas = conf.GetValue<string>("ApiCabañas");
             URLBaseApiTiposCabañas = conf.GetValue<string>("ApiTipoCabañas");
             URLBaseApiMantenimientos = conf.GetValue<string>("ApiMantenimientos");
             URLBaseUsuarios = conf.GetValue<string>("ApiUsuarios");
+            CU_LeerContenido = cuLeer;
+            CU_ObtenerCabañaPorId = cU_ObtenerCabañaPorId;
             WHE = wheParam;
         }
 
-        private string LeerContenido(HttpResponseMessage respuesta)
-        {
-            HttpContent contenido = respuesta.Content;
-            Task<string> tarea2 = contenido.ReadAsStringAsync();
-            tarea2.Wait();
-            string bodyContenido = tarea2.Result;
-            return bodyContenido;
-        }
+
 
         public ActionResult Index()
         {
@@ -42,7 +41,7 @@ namespace MVC.Controllers
                 string url = URLBaseApiMantenimientos;
                 var tarea1 = client.GetAsync(url);
                 tarea1.Wait();
-                string json = LeerContenido(tarea1.Result);
+                string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                 if (tarea1.Result.IsSuccessStatusCode)
                 {
                     List<MantenimientoViewModel> mantenimientos = JsonConvert.DeserializeObject<List<MantenimientoViewModel>>(json);
@@ -72,7 +71,7 @@ namespace MVC.Controllers
                     string url = URLBaseApiMantenimientos + id;
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
                         MantenimientoViewModel mantenimiento = JsonConvert.DeserializeObject<MantenimientoViewModel>(json);
@@ -95,28 +94,28 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
-        {
-            HttpClient cliente = new HttpClient();
-            string url = URLBaseApiCabañas + NumeroHabitacion;
-            var tarea1 = cliente.GetAsync(url);
-            tarea1.Wait();
-            string json = LeerContenido(tarea1.Result);
-            if (tarea1.Result.IsSuccessStatusCode)
-            {
-                CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
-                return buscada;
-            }
-            else
-            {
-                return null;
-            }
-        }
+        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
+        //{
+        //    HttpClient cliente = new HttpClient();
+        //    string url = URLBaseApiCabañas + NumeroHabitacion;
+        //    var tarea1 = cliente.GetAsync(url);
+        //    tarea1.Wait();
+        //    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
+        //    if (tarea1.Result.IsSuccessStatusCode)
+        //    {
+        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
+        //        return buscada;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
         public ActionResult Create(int NumeroHabitacion) 
             {
                 if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
                 {
-                    CabañaViewModel aAgregar = ObtenerCabaña(NumeroHabitacion);
+                    CabañaViewModel aAgregar = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(NumeroHabitacion);
                     MantenimientoViewModel nuevo = new MantenimientoViewModel();
                     nuevo.IdCabaña = aAgregar.NumeroHabitacion;
                     return View(nuevo);
@@ -134,11 +133,12 @@ namespace MVC.Controllers
                 if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
                 {
                     HttpClient cliente = new HttpClient();
-                    string url = URLBaseApiMantenimientos;
+                    string email = HttpContext.Session.GetString("usuarioLogueadoMail").ToLower().Replace("@","%40");
+                    string url = URLBaseApiMantenimientos + email;
                     cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
                     var tarea1 = cliente.PostAsJsonAsync(url, mantenimientoNuevo);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
                         return RedirectToAction(nameof(Index));
@@ -167,7 +167,7 @@ namespace MVC.Controllers
                     string url = URLBaseApiMantenimientos+ "Cabaña/"+ NumeroHabitacion;
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
                         List<MantenimientoViewModel> mantenimiento = JsonConvert.DeserializeObject<List<MantenimientoViewModel>>(json);
@@ -215,7 +215,7 @@ namespace MVC.Controllers
                     string url = URLBaseApiMantenimientos + Id + "+" + fecha1.ToString("yyyy-MM-ddTHH:mm:ss") + "+" + fecha2.ToString("yyyy-MM-ddTHH:mm:ss");
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
                         List<MantenimientoViewModel> mantenimiento = JsonConvert.DeserializeObject<List<MantenimientoViewModel>>(json);
@@ -266,7 +266,7 @@ namespace MVC.Controllers
                     string url = URLBaseApiMantenimientos + "valor1=" + valor1 +"&valor2="+valor2; 
                     var tarea1 = client.GetAsync(url);
                     tarea1.Wait();
-                    string json = LeerContenido(tarea1.Result);
+                    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
                     {
                         List<MantenimientoViewModel> mantenimientos = JsonConvert.DeserializeObject<List<MantenimientoViewModel>>(json);

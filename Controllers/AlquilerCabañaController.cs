@@ -1,5 +1,12 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MVC.CommonRequest.Interfaces;
+using MVC.Models;
+using MVC.Models.ViewModels.Alquiler;
+using MVC.Models.ViewModels.Cabaña;
+using MVC.Models.ViewModels.Usuario;
+using Newtonsoft.Json;
+using System.Net.Http.Headers;
 
 namespace MVC.Controllers
 {
@@ -9,57 +16,152 @@ namespace MVC.Controllers
         public string URLBaseApiTiposCabañas { get; set; }
         public string URLBaseApiMantenimientos { get; set; }
         public string URLBaseUsuarios { get; set; }
+        public string URLBaseAlquileres { get; set; }
 
         public IWebHostEnvironment WHE { get; set; }
-        public AlquilerCabañaController(IWebHostEnvironment wheParam, IConfiguration conf)
+        public IObtenerUsuarioLogueado CU_ObtenerUsuarioLogueado { get; set; }
+        public IObtenerCabañaPorId CU_ObtenerCabañaPorId { get; set; }
+        public IObtenerAlquilerPorId CU_ObtenerAlquilerPorId { get; set; }
+        public ILeerContenidoBodyApi CU_LeerContenidoBody { get; set; }
+        public AlquilerCabañaController(IWebHostEnvironment wheParam, IConfiguration conf, IObtenerUsuarioLogueado cuObtenerLogueado, IObtenerCabañaPorId cU_ObtenerCabañaPorId, IObtenerAlquilerPorId cU_ObtenerAlquilerPorId, ILeerContenidoBodyApi cU_LeerContenidoBody)
         {
             URLBaseApiCabañas = conf.GetValue<string>("ApiCabañas");
             URLBaseApiTiposCabañas = conf.GetValue<string>("ApiTipoCabañas");
             URLBaseApiMantenimientos = conf.GetValue<string>("ApiMantenimientos");
             URLBaseUsuarios = conf.GetValue<string>("ApiUsuarios");
+            URLBaseAlquileres = conf.GetValue<string>("ApiAlquileres");
             WHE = wheParam;
+            CU_ObtenerUsuarioLogueado = cuObtenerLogueado;
+            CU_ObtenerCabañaPorId = cU_ObtenerCabañaPorId;
+            CU_ObtenerAlquilerPorId = cU_ObtenerAlquilerPorId;
+            CU_LeerContenidoBody = cU_LeerContenidoBody;
         }
-        private string LeerContenido(HttpResponseMessage respuesta)
-        {
-            HttpContent contenido = respuesta.Content;
-            Task<string> tarea2 = contenido.ReadAsStringAsync();
-            tarea2.Wait();
-            string bodyContenido = tarea2.Result;
-            return bodyContenido;
-        }
+        //private string LeerContenido(HttpResponseMessage respuesta)
+        //{
+        //    HttpContent contenido = respuesta.Content;
+        //    Task<string> tarea2 = contenido.ReadAsStringAsync();
+        //    tarea2.Wait();
+        //    string bodyContenido = tarea2.Result;
+        //    return bodyContenido;
+        //}
 
 
         // GET: AlquilerCabañaController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
+        
         // GET: AlquilerCabañaController/Details/5
         public ActionResult Details(int id)
         {
             return View();
         }
-
+        //private UsuarioViewModel ObtenerUsuarioLogueado()
+        //{
+        //    HttpClient cliente = new HttpClient();
+        //    string email = HttpContext.Session.GetString("usuarioLogueadoMail");
+        //    string emailConverted = "$" + email.Replace("@", "%40");
+        //    string url = URLBaseUsuarios + "Usuario/" + emailConverted;
+        //    Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
+        //    tarea1.Wait();
+        //    HttpResponseMessage respuesta = tarea1.Result;
+        //    string bodyContenido = LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(bodyContenido);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
+        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
+        //{
+        //    HttpClient cliente = new HttpClient();
+        //    string url = URLBaseApiCabañas + NumeroHabitacion;
+        //    var tarea1 = cliente.GetAsync(url);
+        //    tarea1.Wait();
+        //    string json = LeerContenido(tarea1.Result);
+        //    if (tarea1.Result.IsSuccessStatusCode)
+        //    {
+        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
+        //        return buscada;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
         // GET: AlquilerCabañaController/Create
-        public ActionResult Create()
+        public ActionResult Create(int id) //OK
         {
-
-            return View();
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") == null || HttpContext.Session.GetString("token") == null)
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
+            else if (HttpContext.Session.GetString("usuarioLogueadoRol").ToLower() != "usuario")
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                CabañaViewModel seleccionada = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(id);
+                if(seleccionada ==null)
+                {
+                    ViewBag.Mensaje = "Cierre sesion y vuelva a intentar";
+                    return View();
+                }
+                AlquilerCabañaViewModel nuevoAlquiler = new AlquilerCabañaViewModel();
+                nuevoAlquiler.Cabaña = seleccionada;
+  
+                return View(nuevoAlquiler);
+            }
         }
 
         // POST: AlquilerCabañaController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(AlquilerCabañaViewModel nuevoAlquiler)
         {
-            try
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
             {
-                return RedirectToAction(nameof(Index));
+                if(HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario")
+                {
+                   UsuarioViewModel logueado = CU_ObtenerUsuarioLogueado.ObtenerUsuarioLogueadoApi(HttpContext.Session.GetString("usuarioLogueadoMail"));
+                    if (logueado != null)
+                    {
+                        nuevoAlquiler.Usuario = logueado;
+                        nuevoAlquiler.UsuarioId = logueado.Id;
+
+                        HttpClient cliente = new HttpClient();
+                        string url = URLBaseAlquileres;
+                        cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                        var tarea1 = cliente.PostAsJsonAsync(url, nuevoAlquiler);
+                        tarea1.Wait();
+                        string json = CU_LeerContenidoBody.LeerContenido(tarea1.Result);
+                        if (tarea1.Result.IsSuccessStatusCode)
+                        {
+                            return RedirectToAction("ListarMisAlquileresPropias", "Usuario");
+                        }
+                        else
+                        {
+                            nuevoAlquiler.Cabaña = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(nuevoAlquiler.CabañaId);
+                            ViewBag.Mensaje = json;
+                            return View(nuevoAlquiler);
+                        }
+                    }
+                    else
+                    {
+                        nuevoAlquiler.Cabaña = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(nuevoAlquiler.CabañaId);
+                        ViewBag.Mensaje = "Vuelve a loguearte";
+                        return View(nuevoAlquiler);
+                    }
+                   
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
             }
-            catch
+            else
             {
-                return View();
+                return RedirectToAction("Login", "Usuario");
             }
         }
 
@@ -84,25 +186,74 @@ namespace MVC.Controllers
             }
         }
 
-        // GET: AlquilerCabañaController/Delete/5
-        public ActionResult Delete(int id)
+// GET: AlquilerCabañaController/Delete/5
+public ActionResult Delete(int id)
         {
-            return View();
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
+            {
+                AlquilerCabañaViewModel alquiler = CU_ObtenerAlquilerPorId.ObtenerAlquiLerPorIdApi(id);
+                if(alquiler != null)
+                {
+                    return View(alquiler);
+                }
+                ViewBag.Mensaje = "Error";
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Usuario");
+            }
         }
 
         // POST: AlquilerCabañaController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(AlquilerCabañaViewModel alquiler)
         {
-            try
+            if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
             {
-                return RedirectToAction(nameof(Index));
+                HttpClient client = new HttpClient();
+                string email = HttpContext.Session.GetString("usuarioLogueadoMail");
+                string url = URLBaseAlquileres + email + "/" + alquiler.Id;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var tarea1 = client.DeleteAsync(url);
+                tarea1.Wait();
+                var respuesta = tarea1.Result;
+                string json = CU_LeerContenidoBody.LeerContenido(respuesta);
+                if (tarea1.Result.IsSuccessStatusCode)
+                {
+                    TempData["Mensaje"] = "Eliminado con exito";
+                    return RedirectToAction("ListarMisAlquileresPropias", "Usuario");
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Error: " + json;
+                    return View(alquiler);
+                }
             }
-            catch
+            else
             {
-                return View();
+                return RedirectToAction("Login", "Usuario");
             }
         }
+
+
+        //private AlquilerCabañaViewModel ObtenerAlquiLerPorId(int id)
+        //{
+        //    HttpClient client = new HttpClient();
+        //    string url = URLBaseAlquileres + id;
+        //    var tarea1 = client.GetAsync(url);
+        //    tarea1.Wait();
+        //    var respuesta = tarea1.Result;
+        //    string json = LeerContenido(respuesta);
+        //    if (respuesta.IsSuccessStatusCode)
+        //    {
+        //        return JsonConvert.DeserializeObject<AlquilerCabañaViewModel>(json);
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+        //}
     }
 }

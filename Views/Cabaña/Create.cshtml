@@ -1,6 +1,6 @@
-﻿
+﻿@using MVC.Models.ViewModels.Cabaña;
 
-@model MVC.Models.AltaCabañaViewModel
+@model AltaCabañaViewModel
 @{
     ViewData["Title"] = "Create";
 }
@@ -13,37 +13,43 @@
         <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Cabaña.Nombre" class="control-label"></label>
+                <label asp-for="Cabaña.Nombre" class="control-label">Name</label>
                 <input asp-for="Cabaña.Nombre" class="form-control" />
                 <span asp-validation-for="Cabaña.Nombre" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Cabaña.Descripcion" class="control-label"></label>
+                <label asp-for="Cabaña.Descripcion" class="control-label">Description</label>
                 <input asp-for="Cabaña.Descripcion" class="form-control" />
                 <span asp-validation-for="Cabaña.Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cabaña.PrecioDiario" class="control-label">Daily Price</label>
+                <input asp-for="Cabaña.PrecioDiario" class="form-control" />
+                <span asp-validation-for="Cabaña.PrecioDiario" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
                     <input class="form-check-input" asp-for="Cabaña.PoseeJacuzzi" /> @Html.DisplayNameFor(model => model.Cabaña.PoseeJacuzzi)
                 </label>
             </div>
-            <div class="form-group form-check">
+            <div class="form-group form-check visually-hidden">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Cabaña.EstaHabilitada" /> @Html.DisplayNameFor(model => model.Cabaña.EstaHabilitada)
+                    <input class="form-check-input" asp-for="Cabaña.EstaHabilitada" checked/> @Html.DisplayNameFor(model => model.Cabaña.EstaHabilitada)
                 </label>
             </div>
             <div class="form-group">
-                <label asp-for="Cabaña.CantidadPersonasMax" class="control-label"></label>
+                <label asp-for="Cabaña.CantidadPersonasMax" class="control-label">Maxium Guests</label>
                 <input asp-for="Cabaña.CantidadPersonasMax" class="form-control" min="1" />
                 <span asp-validation-for="Cabaña.CantidadPersonasMax" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Foto" class="control-label"></label>
+                <label asp-for="Foto" class="control-label">Photo</label>
                 <input asp-for="Foto" class="form-control" type="file" />
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
                 <br />
                 <div class="form-group">
+                    Type:
                 <select name="IdTipoCabaña" id="tiposCabañas">
                         @foreach (var tipo in Model.TiposCabañas)
                         {

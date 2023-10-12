@@ -2,9 +2,9 @@
     ViewData["Title"] = "Home Page";
 }
 @{
+    <p>@ViewBag.Mensaje</p>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="">Options</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -16,9 +16,15 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="@Url.Action("Index", "TipoCabaña")">List</a></li>
+                            @if (ViewBag.RolUsuarioLogueado == "administrador")
+                            {
                             <li><a class="dropdown-item"  href="@Url.Action("Create", "TipoCabaña")">Create</a></li>
+                            }
+                            @if (ViewBag.RolUsuarioLogueado == "administrador")
+                            {   
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorNombre", "TipoCabaña")">Search for name</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorNombreAdministrador", "TipoCabaña")">Search for name</a></li>
+                            }
                         </ul>
                     </li>
                     
@@ -28,30 +34,49 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="@Url.Action("Index", "Cabaña")">List</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Create", "Cabaña")">Create</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorTextoNombre", "Cabaña")">Search for text in the name</a></li>
+ 
                             <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="@Url.Action("BuscarPorTextoNombre", "Cabaña")">Search for name</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("BuscarPorTipo", "Cabaña")">Search for type</a></li>
                             <li><a class="dropdown-item" href="@Url.Action("BuscarPorCantPersonas", "Cabaña")">Search for amount of guests</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("ListarSoloHabilitadas", "Cabaña")">Search for ables to rent</a></li>
+                            @if (ViewBag.RolUsuarioLogueado == "administrador")
+                            {
+                            <li><a class="dropdown-item" href="@Url.Action("ListarNOHabilitadas", "Cabaña")">Search disabled</a></li>
+                            }
                             <li><a class="dropdown-item" href="@Url.Action("ListarPorMonto", "Cabaña")">Search for cost</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("ListarDisponiblesEnRangoFechas", "Cabaña")">Listar disponibles en rango de fechas</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("ListarDisponiblesEnRangoFechas", "Cabaña")">Search available within a date range</a></li>
                         </ul>
                     </li>
+                    @if(ViewBag.RolUsuarioLogueado == "usuario")
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Own Cabins
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("ListarCabañasPropias", "Usuario")">List</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                @if (ViewBag.RolUsuarioLogueado == "usuario")
+                                {
+                                    <li><a class="dropdown-item" href="@Url.Action("Create", "Cabaña")">Create</a></li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Rented Cabins
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("ListarMisAlquileresPropias", "Usuario")">List</a></li>
+                            </ul>
+                        </li>
+         
+                    }
 
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Maintenances
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="@Url.Action("ListarMantenimientosPorValores", "Mantenimiento")">List for values</a></li>
-                        </ul>
-                    </li>
-
-                <form method="get" asp-controller="Usuario" asp-action="Logout"  class="d-flex">
-                    <button class="btn btn-danger" type="submit">Log out</button>
-                </form>
             </div>
+            <form method="post" asp-controller="Usuario" asp-action="Logout" class="d-flex ">
+                <button  class="btn btn-danger" type="submit">Log out</button>
+            </form>
         </div>
     </nav>
 }
@@ -59,6 +84,126 @@
 
 <div>@ViewBag.Mensaje</div>
 
-<div class="text-center">
-    <p>Developed by: Germán Méndez .</p>
+<div class="ProjectContainer">
+
+    <div class="headerProjectContainer">
+        <h5 >Proyect: </h5> Application to Rent Cabins.
+    </div>
+    <div class="mainProjectContainer">
+
+        <div class="descriptionContainer">
+            <h5>Description</h5>
+            This project consists of a FullStack application that allows users to manage and rent cabins through an intuitive user interface. The client application (where you are reading this) interacts with an API connected to a database. Users can perform various management actions related to cabins and their rentals.
+        </div>
+            
+        <h5 class="tecnologiasTitle">Technologies used.</h5>
+        <div class="gridContainer">
+            <div class="backendContainer">
+                <ul>
+                <strong class="backend">Backend:</strong>
+                    <li>C#</li>
+                    <li>.NET 7</li>
+                    <li>WEB API</li>
+                    <li>Entity Framework</li>
+                    <li>LINQ</li>
+                    <li>SQL</li>
+                </ul>
+            </div>
+            <div class="frontendContainer">
+                <ul>
+                <strong class="frontend">Frontend:</strong>
+                    <li>HTML</li>
+                    <li>JS</li>
+                    <li>CSS</li>
+                    <li>BOOTSTRAP</li>
+                </ul>
+            </div>
+            <div class="arquitecturaContainer">
+                <ul>
+                    <strong class="arquitectura">Architecture.:</strong>
+                    <li>MVC</li>
+                    <li>REPOSITORY PATTERN</li>
+                </ul>
+            </div>
+            <div class="otrosContainer">
+                <ul>
+                <strong class="otros">Others:</strong>
+                    <li>USES CASES</li>
+                    <li>VIEW MODEL</li>
+                    <li>DTOS</li>
+                    <li>JSON BEARER TOKEN</li>
+                    <li>VALUE OBJECTS</li>
+                </ul>
+            </div>
+        </div>
+        <h5>Main functionalities.</h5>
+
+        <div class="gridContainer">
+            <div class="backendContainer">
+                <ul>
+                    <strong class="backend">Cabin Management:</strong>
+                    <li>Creation, editing, deletion, and searching of cabins with various types of filters.</li>
+                    <li>Enablement or Disabling by an administrator.</li>
+                    <li>Association of an owner with a specific type of cabin.</li>
+                    <li>Recording maintenance performed on each cabin.</li>
+                </ul>
+            </div>
+            <div class="backendContainer">
+                <ul>
+                    <strong class="backend">Rental Management:</strong>
+                    <li>Creation, editing, deletion, and searching of rentals with various types of filters.</li>
+                    <li>Execution of cabin rentals by users.</li>
+                    <li>Association of a user who makes the rental and the rented cabin.</li>
+                </ul>
+            </div>
+            <div class="backendContainer">
+                <ul>
+                    <strong class="backend">User Management:</strong>
+                    <li>User login and registration.</li>
+                    <li>Retrieval of rentals made by the user.</li>
+                    <li>Retrieval of cabins the user owns.</li>
+                </ul>
+            </div>
+            <div class="backendContainer">
+                <ul>
+                    <strong class="backend">Types Management:</strong>
+                    <li>Creation, editing, deletion, and searching of types with various types of filters.</li>
+                </ul>
+            </div>
+            <div class="backendContainer">
+                <ul>
+                    <strong class="backend">Maintenance Management:</strong>
+                    <li>Creation, editing, deletion, and searching of maintenance records.</li>
+                </ul>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+        <h5>Class Relationships</h5>
+        <strong>User:</strong>
+        Can be associated with cabins and rentals.
+        <br />
+        <strong>Cabin:</strong>
+        Has an owner and a cabin type.
+        Can be rented and can have associated maintenance.
+        <br />
+        <strong>Maintenance:</strong>
+        Is associated with a specific cabin.
+        <br />
+        <strong>Rental:</strong>
+        Is associated with a user and the rented cabin.
+        <br />
+        <strong>Cabin Type:</strong>
+        Can be associated by a cabin.
+
+    </div>
+ 
 </div>

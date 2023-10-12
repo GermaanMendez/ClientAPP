@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using MVC.Models.ViewModels.Cabaña;
 
-namespace MVC.Models.ViewModels
+namespace MVC.Models.ViewModels.Mantenimiento
 {
     public class MantenimientoViewModel
     {

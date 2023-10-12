@@ -17,6 +17,7 @@ namespace MVC.Controllers
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
             {
+                ViewBag.RolUsuarioLogueado = HttpContext.Session.GetString("usuarioLogueadoRol");
                 return View();
             }
             else

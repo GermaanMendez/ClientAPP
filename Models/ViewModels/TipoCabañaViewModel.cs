@@ -16,10 +16,5 @@ namespace MVC.Models.ViewModels
         public string Nombre { get; set; }
         public string Descripcion { get; set; }
 
-        [Display(Name = "Costo por huesped")]
-        public double CostoPorHuesped { get; set; }
-
-
-
     }
 }

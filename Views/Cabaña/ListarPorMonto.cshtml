@@ -1,11 +1,12 @@
-﻿@using MVC.Models.ViewModels
-@model IEnumerable<CabañaViewModel>
+﻿
+    @using MVC.Models.ViewModels.Cabaña
+@model MostrarListaCabañasRolViewModel
 
 @{
     ViewData["Title"] = "ListarPorMonto";
 }
 
-<h1>Listar por rango de precio</h1>
+<h1>List By Price Range</h1>
 <p>@ViewBag.Mensaje</p>
 <form method="post">
     <div class="form-group">
@@ -21,31 +22,28 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.NumeroHabitacion)
+                    Room Number
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Nombre)
+                    Name
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Descripcion)
+                    Description
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+                    Has Jacuzzi
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.EstaHabilitada)
+                    Maxium Guests
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CantidadPersonasMax)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Foto)
+                    Photo
                 </th>
                 <th></th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.cabañas)
             {
                 <tr>
                     <td>
@@ -71,9 +69,16 @@
                     </td>
 
                     <td>
-                        @* @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |*@
-                        @Html.ActionLink("Details/maintenance", "Details", new {  id=item.NumeroHabitacion  })
-                        @* @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                    <td>
+                            @if (Model.rolUsuarioLogueado == "usuario")
+                            {
+                                @Html.ActionLink("Rent", "Create","AlquilerCabaña", new {  id=item.NumeroHabitacion  })
+                            }
+                            @if (Model.rolUsuarioLogueado == "administrador")
+                            {
+                                @Html.ActionLink("Details", "Details", new {  id=item.NumeroHabitacion  })
+                            }
+                    </td>
                     </td>
                 </tr>
             }

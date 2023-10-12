@@ -1,4 +1,5 @@
-﻿@using MVC.Models.ViewModels
+﻿
+@using MVC.Models.ViewModels.Cabaña
 @model CabañaViewModel
 
 @{
@@ -18,12 +19,12 @@
                 <img class="card-img-top" src="/Imagenes/@Model.Foto">
             </td>
         </div>
-@*        <dt class="col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.NumeroHabitacion)
-        </dt>*@
-@*        <dd class="col-sm-10">
+        </dt>
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.NumeroHabitacion)
-        </dd>*@
+        </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
@@ -54,18 +55,36 @@
         <dd class="col-sm-10">
             @Html.DisplayFor(model => model.CantidadPersonasMax)
         </dd>
-@*        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.IdTipoCabaña)
+       <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.PrecioDiario)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.IdTipoCabaña)
-        </dd>*@
+            @Html.DisplayFor(model => model.PrecioDiario)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoCabaña)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoCabaña.Nombre)
+        </dd>
+        <dt class="col-sm-2">
+            Nombre Dueño:
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Nombre) @Html.DisplayFor(model => model.Usuario.Apellido)
+        </dd>
+        <dt class="col-sm-2">
+            Email Dueño:
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Email)
+        </dd>
     </dl>
 </div>
 <div>
     @* @Html.ActionLink("Crear nuevo mantenimiento", "Create", "Mantenimiento", new { id = Model.NumeroHabitacion })*@
-    <div class="flex-column">
-@*        <form method="get" asp-controller="Mantenimiento" asp-action="Create">
+    <div class="d-flex">
+        <form method="get" asp-controller="Mantenimiento" asp-action="Create">
             <input type="hidden" asp-for="NumeroHabitacion" />
             <input type="submit" value="Add new Maitenance" class="btn btn-primary" />
         </form>
@@ -76,16 +95,11 @@
             <input type="submit" value="List Maitenance" class="btn btn-primary" />
         </form>
 
-
-        <form method="get" asp-controller="Mantenimiento" asp-action="ListarMantenimientosPorFecha">
+        <form method="post" asp-controller="Cabaña" asp-action="Delete">
             <input type="hidden" asp-for="NumeroHabitacion" />
-            <input type="submit" value="List Maitenance for date" class="btn btn-primary" />
-        </form>*@
-
-        <form method="get" asp-controller="AlquilerCabaña" asp-action="Create">
-            <input type="hidden" asp-for="NumeroHabitacion" />
-            <input type="submit" value="Alquilar" class="btn btn-primary" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
         </form>
-        <a asp-action="Index">Back to List</a>
+
     </div>
+        <a asp-action="Index">Back to List</a>
 </div>

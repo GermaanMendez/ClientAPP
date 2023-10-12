@@ -1,46 +1,59 @@
-﻿@using MVC.Models.ViewModels;
+﻿
+@using MVC.Models.ViewModels.Cabaña;
 @model BuscarPorTipoViewModel;
 
-<h1>Types of Cabins</h1>
 <div>@ViewBag.Mensaje</div>
-
 <form method="post">
     <div class="form-group">
         <label asp-for="IdTipoCabaña">Select a type of cabin:</label>
-        <select asp-for="IdTipoCabaña" asp-items="@(new SelectList(Model.TiposCabañas, "Id", "Nombre"))"></select>
-    <button type="submit" class="btn btn-primary">Buscar</button>
+            <select asp-for="IdTipoCabaña" asp-items="@(new SelectList(Model.TiposCabañas, "Id", "Nombre"))"></select>
+    <button type="submit" class="btn btn-primary">Search</button>
     </div>
 </form>
 
-@if (ViewBag.Cabañas != null)
+@if (Model!=null)
 {
     <h2>Cabins of the selected cabin type:</h2>
 
     <table class="table">
         <thead>
             <tr>
-                <th>Room Number</th>
+                <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Has jacuzzi</th>
-                <th>Its enabled</th>
-                <th>maximum number of people/guests</th>
+                <th>Jacuzzi</th>
+                <th>Number of guests</th>
                 <th>Photo</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var cabaña in ViewBag.Cabañas)
+            @if (ViewBag.Cabañas != null && ViewBag.Cabañas.Count() > 1)
             {
-                <tr>
-                    <td>@cabaña.NumeroHabitacion</td>
-                    <td>@cabaña.Nombre</td>
-                    <td>@cabaña.Descripcion</td>
-                    <td>@cabaña.PoseeJacuzzi</td>
-                    <td>@cabaña.EstaHabilitada</td>
-                    <td>@cabaña.CantidadPersonasMax</td>
-                    <td><img src="/Imagenes/@cabaña.Foto" height="120" /></td>
-                </tr>
+                @foreach (var cabaña in ViewBag.Cabañas)
+                {
+                    <tr>
+                        <td>@cabaña.NumeroHabitacion</td>
+                        <td>@cabaña.Nombre</td>
+                        <td>@cabaña.Descripcion</td>
+                        <td><input type="checkbox" @(
+                            cabaña.PoseeJacuzzi ? "checked" : "") disabled>
+                        </td>
+                        <td>@cabaña.CantidadPersonasMax</td>
+                        <td><img src="/Imagenes/@cabaña.Foto" height="120" /></td>
+                        <td>
+                            @if (Model.RolUsuarioLogueado == "usuario")
+                            {
+                                @Html.ActionLink("Rent", "Create","AlquilerCabaña", new {  id=cabaña.NumeroHabitacion  })
+                            }
+                            @if (Model.RolUsuarioLogueado == "administrador")
+                            {
+                                @Html.ActionLink("Details", "Details", new {  id=cabaña.NumeroHabitacion  })
+                            }
+                        </td>
+                    </tr>
+                }
             }
         </tbody>
+
     </table>
 }

@@ -1,4 +1,4 @@
-﻿@using MVC.Models.ViewModels;
+﻿@using MVC.Models.ViewModels.Mantenimiento;
 @model IEnumerable<MantenimientoViewModel>;
 
 @{
@@ -7,7 +7,7 @@
 
 <h1>List of maintenance performed for the selected cabin</h1>
 <div>@ViewBag.Mensaje</div>
-@*@if (Model != null){*@
+@if (Model != null){
 <table class="table">
     <thead>
         <tr>
@@ -58,7 +58,7 @@
     </tbody>
 </table>
 }
-@*else
+else
 {
     <h2>No hay mantenimientos realizados para esta cabaña cree uno y vuelva a intentarlo. </h2>
-}*@
+}

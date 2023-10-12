@@ -1,42 +1,41 @@
-﻿@using MVC.Models.ViewModels;
+﻿
+@using MVC.Models.ViewModels.Cabaña;
 @model IEnumerable<CabañaViewModel>;
 
 @{
-    ViewData["Title"] = "ListarSoloHabilitadas";
+    ViewData["Title"] = "ListarNOHabilitadas";
 }
 
 <h1>List of cabins ables to rent.</h1>
 
-<p>
-    <a asp-action="Create">Create new</a>
-</p>
+<p>@ViewBag.Mensaje</p>
 @if(Model!=null){
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Foto)
+                Photo
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.NumeroHabitacion)
+               Room Number
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Nombre)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Descripcion)
+                Description
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+                Has Jacuzzi
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EstaHabilitada)
+                Enabled
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CantidadPersonasMax)
+                Maxium Guests
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IdTipoCabaña)
+                Id Type Of Cabin
             </th>
             <th></th>
         </tr>
@@ -69,9 +68,10 @@
                 @Html.DisplayFor(modelItem => item.IdTipoCabaña)
             </td>
             <td>
-@*                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
+                        @using (Html.BeginForm("HabilitarCabaña", "Cabaña", new { idCabaña = item.NumeroHabitacion }, FormMethod.Post))
+                        {
+                            <button type="submit" class="btn btn-success btn-md mt-2 ">Enable</button>
+                        }
             </td>
         </tr>
 }

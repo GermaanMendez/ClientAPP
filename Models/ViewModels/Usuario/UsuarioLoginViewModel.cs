@@ -1,4 +1,4 @@
-﻿namespace MVC.Models.ViewModels
+﻿namespace MVC.Models.ViewModels.Usuario
 {
     public class UsuarioLoginViewModel
     {

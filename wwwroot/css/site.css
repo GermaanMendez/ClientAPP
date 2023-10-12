@@ -20,3 +20,44 @@ html {
 body {
   margin-bottom: 60px;
 }
+.icon{
+    height:40px;
+    width:45px;
+}
+.headerProjectContainer{
+    margin-top:25px;
+    display:flex;
+    align-items:center
+}
+.headerProjectContainer h5 {
+    margin-right:10px
+}
+.ProjectContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.descriptionContainer{
+    display:flex;
+    flex-direction:column;
+}
+.descriptionContainer h5 {
+        margin-right: 10px
+}
+.mainProjectContainer {
+    margin-top: 10px;
+}
+.tecnologiasTitle{
+    margin-top:20px
+}
+.gridContainer {
+    display: flex;
+}
+
+.author {
+    display: flex;
+    margin:0 auto;
+    justify-content: center;
+    align-items: center;
+    height: 100px; /* Ajusta la altura según tu diseño */
+}

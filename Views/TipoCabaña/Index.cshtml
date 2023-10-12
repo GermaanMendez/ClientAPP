@@ -1,14 +1,8 @@
-﻿@using MVC.Models.ViewModels;
+﻿﻿@using MVC.Models.ViewModels;
 @model IEnumerable<TipoCabañaViewModel>;
 
-@{
-    ViewData["Title"] = "Index";
-}
-@ViewBag.Mensaje
-<h1>List of the types of cabins in the system.</h1>
-<p>
-    <a asp-action="Create" class="btn-success">Crear nuevo tipo</a>
-</p>
+<h1>Types Of Cabins In The System.</h1>
+
 <div>@ViewBag.Mensaje</div>
 @if (Model != null){
     <table class="table">
@@ -22,9 +16,6 @@
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Descripcion)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CostoPorHuesped)
                 </th>
                 <th></th>
             </tr>
@@ -43,14 +34,14 @@
                     <td>
                         @Html.DisplayFor(modelItem => item.Descripcion)
                     </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.CostoPorHuesped)
-                    </td>
-                    <td>
-@*                        @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                        @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })*@
-                   </td>
+                @if (ViewBag.RolUsuarioLogueado == "administrador")
+                {
+                        <td>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }) | 
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id})
+                        </td>
+                            
+                }
                 </tr>
             }
         </tbody>

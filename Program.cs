@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
-
+﻿
+using Microsoft.EntityFrameworkCore;
+using MVC.CommonRequest;
+using MVC.CommonRequest.Interfaces;
 
 namespace MVC
 {
@@ -15,7 +17,12 @@ namespace MVC
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
-            
+            builder.Services.AddScoped<ILeerContenidoBodyApi, LeerContenidoJsonBodyApi>();
+            builder.Services.AddScoped<IObtenerTiposCabañas, ObtenerTiposCabañas>();
+            builder.Services.AddScoped<IObtenerAlquilerPorId, ObtenerAlquilerPorId>();
+            builder.Services.AddScoped<IObtenerCabañaPorId, ObtenerCabañaPorId>();
+            builder.Services.AddScoped<IObtenerTipoCabañaPorId, ObtenerTipoCabañaPorId>();
+            builder.Services.AddScoped<IObtenerUsuarioLogueado, ObtenerUsuarioLogueado>();
             var app = builder.Build();
 
 

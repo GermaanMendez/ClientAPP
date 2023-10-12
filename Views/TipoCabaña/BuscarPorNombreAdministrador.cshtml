@@ -1,15 +1,18 @@
 ﻿@using MVC.Models.ViewModels;
+@using MVC.Models.ViewModels;
 @model TipoCabañaViewModel;
 
 @{
     ViewData["Title"] = "BuscarPorNombre";
 }
 
-<h1>Search type of cabin for name.</h1>
+<h1>Search By Name.</h1>
 <form method="post">
-    <label>Name:</label>
-    <input type="text" name="Nombre" placeholder="Buscar tipo por su nombre."/>
-    <input type="submit" value="Search" class="btn-success " />
+    <div class="buscarTipoContainer">
+        <label>Name:</label>
+        <input type="text" name="Nombre" id="nombreTipoinput"  />
+        <input type="submit" id="btnBuscarTipo" value="Search" class="btn-success btn " />
+    </div>
 </form>
 <div>@ViewBag.Mensaje</div>
 <div>
@@ -23,22 +26,16 @@
             @Html.DisplayFor(model => model.Id)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
+            Name
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Nombre)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
+           Description
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CostoPorHuesped)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CostoPorHuesped)
         </dd>
         @if (Model != null)
         {
