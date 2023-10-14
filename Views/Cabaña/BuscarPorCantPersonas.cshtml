@@ -27,6 +27,9 @@
                 Description
             </th>
             <th>
+                Daily Price
+            </th>
+            <th>
                 Has Jacuzzi
             </th>
             <th>
@@ -47,6 +50,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Descripcion)
             </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrecioDiario)
+                    </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PoseeJacuzzi)
             </td>

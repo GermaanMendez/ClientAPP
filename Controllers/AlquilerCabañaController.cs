@@ -57,7 +57,7 @@ namespace MVC.Controllers
                 CabañaViewModel seleccionada = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(id);
                 if(seleccionada ==null)
                 {
-                    ViewBag.Mensaje = "Cierre sesion y vuelva a intentar";
+                    ViewBag.Mensaje = "Try Again";
                     return View();
                 }
                 AlquilerCabañaViewModel nuevoAlquiler = new AlquilerCabañaViewModel();
@@ -101,7 +101,7 @@ namespace MVC.Controllers
                     else
                     {
                         nuevoAlquiler.Cabaña = CU_ObtenerCabañaPorId.ObtenerCabañaPorIdApi(nuevoAlquiler.CabañaId);
-                        ViewBag.Mensaje = "Vuelve a loguearte";
+                        ViewBag.Mensaje = "Try Again";
                         return View(nuevoAlquiler);
                     }
                    
@@ -174,7 +174,7 @@ public ActionResult Delete(int id)
                 string json = CU_LeerContenidoBody.LeerContenido(respuesta);
                 if (tarea1.Result.IsSuccessStatusCode)
                 {
-                    TempData["Mensaje"] = "Eliminado con exito";
+                    TempData["Mensaje"] = "Deleted successfully";
                     return RedirectToAction("ListarMisAlquileresPropias", "Usuario");
                 }
                 else

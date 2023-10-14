@@ -21,6 +21,7 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Daily Price</th>
                 <th>Jacuzzi</th>
                 <th>Number of guests</th>
                 <th>Photo</th>
@@ -35,6 +36,7 @@
                         <td>@cabaña.NumeroHabitacion</td>
                         <td>@cabaña.Nombre</td>
                         <td>@cabaña.Descripcion</td>
+                        <td>@cabaña.PrecioDiario</td>
                         <td><input type="checkbox" @(
                             cabaña.PoseeJacuzzi ? "checked" : "") disabled>
                         </td>

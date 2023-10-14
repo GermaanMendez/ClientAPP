@@ -13,32 +13,32 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FechaMantenimiento" class="control-label"></label>
+                <label asp-for="FechaMantenimiento" class="control-label">Date</label>
                 <input asp-for="FechaMantenimiento" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")  />
                 <span asp-validation-for="FechaMantenimiento" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
+                <label asp-for="Descripcion" class="control-label">Description</label>
                 <input asp-for="Descripcion" class="form-control" />
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CostoMantenimiento" class="control-label"></label>
+                <label asp-for="CostoMantenimiento" class="control-label">Cost</label>
                 <input asp-for="CostoMantenimiento" class="form-control" />
                 <span asp-validation-for="CostoMantenimiento" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="NombreEmpleado" class="control-label"></label>
+                <label asp-for="NombreEmpleado" class="control-label">Employee Name</label>
                 <input asp-for="NombreEmpleado" class="form-control" />
                 <span asp-validation-for="NombreEmpleado" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="IdCabaña" class="control-label"></label>
+                <label asp-for="IdCabaña" class="control-label">Room Number</label>
                 <input asp-for="IdCabaña" class="form-control" readonly/>
                 <span asp-validation-for="IdCabaña" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
     </div>

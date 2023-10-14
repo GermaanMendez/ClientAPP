@@ -22,6 +22,9 @@
         <thead>
             <tr>
                 <th>
+                    Daily Price
+                </th>
+                <th>
                     Room Number
                 </th>
                 <th>
@@ -46,6 +49,9 @@
             @foreach (var item in Model.cabañas)
             {
                 <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PrecioDiario)
+                    </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.NumeroHabitacion)
                     </td>

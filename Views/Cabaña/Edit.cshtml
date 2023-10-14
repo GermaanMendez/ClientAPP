@@ -15,12 +15,12 @@
         <form asp-controller="Cabaña" asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="NumeroHabitacion" class="control-label" ></label>
+                <label asp-for="NumeroHabitacion" class="control-label" >Room Number</label>
                 <input asp-for="NumeroHabitacion" class="form-control" name="NumeroHabitacion" readonly />
                 <span asp-validation-for="NumeroHabitacion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
+                <label asp-for="Nombre" class="control-label">Name</label>
                 <input asp-for="Nombre" class="form-control" name="Nombre"/>
                 <span asp-validation-for="Nombre" class="text-danger"></span>
             </div>
@@ -30,27 +30,27 @@
                 <span asp-validation-for="Foto" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
+                <label asp-for="Descripcion" class="control-label">Description</label>
                 <input asp-for="Descripcion" class="form-control" name="Descripcion"/>
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="PoseeJacuzzi" name="PoseeJacuzzi"/> @Html.DisplayNameFor(model => model.PoseeJacuzzi)
+                    <input class="form-check-input" asp-for="PoseeJacuzzi" name="PoseeJacuzzi"/> Has Jacuzzi
                 </label>
             </div>
-            <div class="form-group form-check">
+@*             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EstaHabilitada" name="EstaHabilitada"/> @Html.DisplayNameFor(model => model.EstaHabilitada)
+                    <input class="form-check-input" asp-for="EstaHabilitada" name="EstaHabilitada"/>
                 </label>
-            </div>
+            </div> *@
             <div class="form-group">
-                <label asp-for="CantidadPersonasMax" class="control-label"></label>
+                <label asp-for="CantidadPersonasMax" class="control-label">Maximum guests</label>
                 <input asp-for="CantidadPersonasMax" class="form-control" name="CantidadPersonasMax" />
                 <span asp-validation-for="CantidadPersonasMax" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PrecioDiario" class="control-label"></label>
+                <label asp-for="PrecioDiario" class="control-label">Daily Price</label>
                 <input asp-for="PrecioDiario" class="form-control" name="PrecioDiario"/>
                 <span asp-validation-for="PrecioDiario" class="text-danger"></span>
             </div>

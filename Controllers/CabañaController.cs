@@ -175,7 +175,7 @@ namespace MVC.Controllers
                 string json = CU_LeerContenido.LeerContenido(respuesta);
                 if (tarea1.Result.IsSuccessStatusCode)
                 {
-                    TempData["Mensaje"] = "Eliminado con exito";
+                    TempData["Mensaje"] = "Deleted";
                     return RedirectToAction("ListarCabañasPropias", "Usuario");
                 }
                 else
@@ -559,7 +559,7 @@ namespace MVC.Controllers
                 }
                 else
                 {
-                    ViewBag.Mensaje = "Se debe ingresar la fecha de inicio y la fecha final para la busqueda ademas la fecha inicial debe ser menor a la final";
+                    ViewBag.Mensaje = "From Date and Until Date cannot be null and From Date must be less than Until Date";
                     return View();
                 }
             }
