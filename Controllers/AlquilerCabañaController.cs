@@ -44,7 +44,11 @@ namespace MVC.Controllers
         //    string bodyContenido = tarea2.Result;
         //    return bodyContenido;
         //}
-
+        /// <summary>
+        /// master
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         // GET: AlquilerCabañaController
         
