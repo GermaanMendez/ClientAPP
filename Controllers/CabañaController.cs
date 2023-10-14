@@ -39,29 +39,6 @@ namespace MVC.Controllers
             CU_ObtenerTipoCabañaPorId= cuObtenerTipoId;
         }
         
-
-        //private UsuarioViewModel ObtenerUsuarioLogueado()
-        //{
-        //    HttpClient cliente = new HttpClient();
-        //    string email = HttpContext.Session.GetString("usuarioLogueadoMail");
-        //    string emailConverted = "$"+email.Replace("@", "%40");
-        //    string url = URLBaseUsuarios + "Usuario/" + emailConverted;
-        //    Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-        //    HttpResponseMessage respuesta = tarea1.Result;
-        //    string bodyContenido = CU_LeerContenido.LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(bodyContenido);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        
-
-        // GET: CabañaController
         public ActionResult Index() //OK
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
@@ -181,24 +158,6 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
-        //{
-        //    HttpClient cliente = new HttpClient();
-        //    string url = URLBaseApiCabañas + NumeroHabitacion;
-        //    var tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-        //    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
-        //    if (tarea1.Result.IsSuccessStatusCode)
-        //    {
-        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
-        //        return buscada;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-
         
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -231,58 +190,6 @@ namespace MVC.Controllers
             }
         }
 
-        //private CabañaViewModel ObtenerCabañaPorId(int id)
-        //{
-        //    HttpClient client = new HttpClient();
-        //    string url = URLBaseApiCabañas + id;
-        //    var tarea1 = client.GetAsync(url);
-        //    tarea1.Wait();
-        //    var respuesta = tarea1.Result;
-        //    string json = CU_LeerContenido.LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<CabañaViewModel>(json);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        //private TipoCabañaViewModel ObtenerTipoCabañaPorId(int id)
-        //{
-        //    HttpClient client = new HttpClient();
-        //    string url = URLBaseApiTiposCabañas + id;
-        //    var tarea1 = client.GetAsync(url);
-        //    tarea1.Wait();
-        //    var respuesta = tarea1.Result;
-        //    string json = CU_LeerContenido.LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<TipoCabañaViewModel>(json);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-
-        //private UsuarioViewModel ObtenerUsuarioCabañaPorEmail(string email)
-        //{
-        //    HttpClient client = new HttpClient();
-        //    string url = URLBaseUsuarios + "Usuario/" +"$"+ email;
-        //    var tarea1 = client.GetAsync(url);
-        //    tarea1.Wait();
-        //    var respuesta = tarea1.Result;
-        //    string json = CU_LeerContenido.LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(json);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
         public ActionResult Create() //OK
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") == null || HttpContext.Session.GetString("token") == null)
@@ -671,7 +578,8 @@ namespace MVC.Controllers
                     HttpClient client = new HttpClient();
                     string email = HttpContext.Session.GetString("usuarioLogueadoMail").Replace("@", "%40").ToLower();
                     string url = URLBaseApiCabañas + "deshabilitar/" + email + "/" + idCabaña;
-                    var tarea1 = client.PostAsync(url,null);
+                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                var tarea1 = client.PostAsync(url,null);
                     tarea1.Wait();
                     string json = CU_LeerContenido.LeerContenido(tarea1.Result);
                     if (tarea1.Result.IsSuccessStatusCode)
@@ -698,6 +606,7 @@ namespace MVC.Controllers
                 HttpClient client = new HttpClient();
                 string email = HttpContext.Session.GetString("usuarioLogueadoMail").Replace("@", "%40").ToLower();
                 string url = URLBaseApiCabañas + "habilitar/" + email + "/" + idCabaña;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
                 var tarea1 = client.PostAsync(url,null);
                 tarea1.Wait();
                 string json = CU_LeerContenido.LeerContenido(tarea1.Result);

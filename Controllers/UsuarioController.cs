@@ -27,15 +27,6 @@ namespace MVC.Controllers
         }
 
 
-        //private string LeerContenido(HttpResponseMessage respuesta)
-        //{
-        //    HttpContent contenido = respuesta.Content;
-        //    Task<string> tarea2 = contenido.ReadAsStringAsync();
-        //    tarea2.Wait();
-        //    string bodyContenido = tarea2.Result;
-        //    return bodyContenido;
-        //}
-
         [HttpGet]
         public IActionResult Login()
         {

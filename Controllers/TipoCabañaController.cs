@@ -23,37 +23,6 @@ namespace MVC.Controllers
             CU_ObtenerTipoPorId = cuObtenerTipoId;
             CU_LeerContenido = cU_LeerContenido;
         }
-
-        //private string LeerContenido(HttpResponseMessage respuesta)
-        //{
-        //    HttpContent contenido = respuesta.Content;
-        //    Task<string> tarea2 = contenido.ReadAsStringAsync();
-        //    tarea2.Wait();
-        //    string bodyContenido = tarea2.Result;
-        //    return bodyContenido;
-        //}
-
-        //private TipoCabañaViewModel ObtenerPorId(int id)
-        //{
-        //    TipoCabañaViewModel tipoCab = null;
-
-        //    HttpClient cliente = new HttpClient();
-        //    string url = URLBaseApiTiposCabañas + id;
-        //    var tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-
-        //    string jsonBody = LeerContenido(tarea1.Result);
-        //    if (tarea1.Result.IsSuccessStatusCode)
-        //    {
-        //        tipoCab = JsonConvert.DeserializeObject<TipoCabañaViewModel>(jsonBody);
-        //    }
-        //    else
-        //    {
-        //        tipoCab = null;
-        //    }
-        //    return tipoCab;
-        //}
-
         public ActionResult Index() //OK
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)

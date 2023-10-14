@@ -36,64 +36,12 @@ namespace MVC.Controllers
             CU_ObtenerAlquilerPorId = cU_ObtenerAlquilerPorId;
             CU_LeerContenidoBody = cU_LeerContenidoBody;
         }
-        //private string LeerContenido(HttpResponseMessage respuesta)
-        //{
-        //    HttpContent contenido = respuesta.Content;
-        //    Task<string> tarea2 = contenido.ReadAsStringAsync();
-        //    tarea2.Wait();
-        //    string bodyContenido = tarea2.Result;
-        //    return bodyContenido;
-        //}
-        /// <summary>
-        /// master
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-
-        // GET: AlquilerCabañaController
-        
-        // GET: AlquilerCabañaController/Details/5
+      
         public ActionResult Details(int id)
         {
             return View();
         }
-        //private UsuarioViewModel ObtenerUsuarioLogueado()
-        //{
-        //    HttpClient cliente = new HttpClient();
-        //    string email = HttpContext.Session.GetString("usuarioLogueadoMail");
-        //    string emailConverted = "$" + email.Replace("@", "%40");
-        //    string url = URLBaseUsuarios + "Usuario/" + emailConverted;
-        //    Task<HttpResponseMessage> tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-        //    HttpResponseMessage respuesta = tarea1.Result;
-        //    string bodyContenido = LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<UsuarioViewModel>(bodyContenido);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
-        //{
-        //    HttpClient cliente = new HttpClient();
-        //    string url = URLBaseApiCabañas + NumeroHabitacion;
-        //    var tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-        //    string json = LeerContenido(tarea1.Result);
-        //    if (tarea1.Result.IsSuccessStatusCode)
-        //    {
-        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
-        //        return buscada;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
-        // GET: AlquilerCabañaController/Create
+
         public ActionResult Create(int id) //OK
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") == null || HttpContext.Session.GetString("token") == null)
@@ -242,22 +190,5 @@ public ActionResult Delete(int id)
         }
 
 
-        //private AlquilerCabañaViewModel ObtenerAlquiLerPorId(int id)
-        //{
-        //    HttpClient client = new HttpClient();
-        //    string url = URLBaseAlquileres + id;
-        //    var tarea1 = client.GetAsync(url);
-        //    tarea1.Wait();
-        //    var respuesta = tarea1.Result;
-        //    string json = LeerContenido(respuesta);
-        //    if (respuesta.IsSuccessStatusCode)
-        //    {
-        //        return JsonConvert.DeserializeObject<AlquilerCabañaViewModel>(json);
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
     }
 }

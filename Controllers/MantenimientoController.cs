@@ -94,23 +94,6 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        //private CabañaViewModel ObtenerCabaña(int NumeroHabitacion)
-        //{
-        //    HttpClient cliente = new HttpClient();
-        //    string url = URLBaseApiCabañas + NumeroHabitacion;
-        //    var tarea1 = cliente.GetAsync(url);
-        //    tarea1.Wait();
-        //    string json = CU_LeerContenido.LeerContenido(tarea1.Result);
-        //    if (tarea1.Result.IsSuccessStatusCode)
-        //    {
-        //        CabañaViewModel buscada = JsonConvert.DeserializeObject<CabañaViewModel>(json);
-        //        return buscada;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-        //}
         public ActionResult Create(int NumeroHabitacion) 
             {
                 if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)
