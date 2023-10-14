@@ -52,12 +52,44 @@ body {
 }
 .gridContainer {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
+
+.itemGrid {
+    width: calc(33.333% - 10px);  
+    margin-bottom: 20px; 
+    box-sizing: border-box; 
+}
+
+    
+    .itemGrid ul {
+        list-style: none;
+        padding: 0;
+    }
+
+        .itemGrid ul li {
+            margin-bottom: 5px;
+        }
+
+.backend {
+    display: block;
+    margin-bottom: 10px;
+}
+
 
 .author {
     display: flex;
     margin:0 auto;
     justify-content: center;
     align-items: center;
-    height: 100px; /* Ajusta la altura según tu diseño */
+    height: 100px; 
+}
+
+@media (min-width: 575px) and (max-width: 990px) {
+    .buttonOptions {
+        background-image: url('../Imagenes/estilos/navbarIcon.png');
+       
+    }
+
 }
