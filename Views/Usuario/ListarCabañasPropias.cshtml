@@ -31,9 +31,6 @@
             <th>
                 Maxium Guests
             </th>
-            <th>
-                Daily Price
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -51,9 +48,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Descripcion)
             </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PrecioDiario)
-                    </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrecioDiario)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.PoseeJacuzzi)
             </td>
@@ -62,9 +59,6 @@
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.CantidadPersonasMax)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PrecioDiario)
             </td>
             <td>
                 @Html.ActionLink("Edit", "Edit","Cabaña", new {  id=item.NumeroHabitacion  }) |

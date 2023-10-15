@@ -136,8 +136,10 @@ namespace MVC.Controllers
                 cabañaVM.Usuario = usario;
                 cabañaVM.TipoCabaña= tipo;
                     HttpClient cliente = new HttpClient();
-                    string url = URLBaseApiCabañas +"edit/"+ emailConverted;
-                    cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
+                    string urlBase = "http://localhost:5126/api/Cabaña/";
+                    //string url = URLBaseApiCabañas +"edit/"+ emailConverted;
+                    string url = urlBase + "edit/" + emailConverted;
+                cliente.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
 
                     var tarea1 = cliente.PutAsJsonAsync(url, cabañaVM);
                     tarea1.Wait();
@@ -158,16 +160,17 @@ namespace MVC.Controllers
                 return RedirectToAction("Login", "Usuario");
             }
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int numeroHabitacion)
         {
+       
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
             {
                 HttpClient client = new HttpClient();
-                string email = HttpContext.Session.GetString("usuarioLogueadoMail");
-                string url = URLBaseApiCabañas + email + "+" +numeroHabitacion;
+                string email = HttpContext.Session.GetString("usuarioLogueadoMail").ToLower().Replace("@","%40");
+                string url = URLBaseApiCabañas+"delete" +"/"+ email + "/" +numeroHabitacion;
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", HttpContext.Session.GetString("token"));
                 var tarea1 = client.DeleteAsync(url);
                 tarea1.Wait();
@@ -224,10 +227,20 @@ namespace MVC.Controllers
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null || HttpContext.Session.GetString("token") != null)
             {
-                if (HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario"){
+                if (HttpContext.Session.GetString("usuarioLogueadoRol") == "usuario") {
+                    if (vm.Foto == null)
+                    {
+                        PrepararViewModelYMensajeError(vm, "The Photo cannot be null");
+                        return View(vm);
+                    }
                     FileInfo fi = new FileInfo(vm.Foto.FileName);
                     string Extension = fi.Extension;
-                    string nomArchivoFoto = vm.Cabaña.Nombre + Extension;
+                    if(Extension.ToLower()!=".png" && Extension.ToLower() != ".jpg" && Extension.ToLower() != ".jpeg")
+                    {
+                        PrepararViewModelYMensajeError(vm, "The photo can only be a .png or .jpg file type");
+                        return View(vm);
+                    }
+                        string nomArchivoFoto = vm.Cabaña.Nombre + Extension;
                     if (nomArchivoFoto.Contains(" "))
                     {
                         nomArchivoFoto = nomArchivoFoto.Replace(" ", "_");
@@ -255,7 +268,7 @@ namespace MVC.Controllers
                     {
                         fi = null;
                         List<TipoCabañaViewModel> tipos = CU_ObtenerTipos.ObtenerTiposCabañasApi();
-                        ViewBag.Mensaje = CU_LeerContenido.LeerContenido(tarea.Result);
+                        ViewBag.Mensaje = CU_LeerContenido.LeerContenido2(tarea.Result);
                         vm.TiposCabañas = tipos;
                         return View(vm);
                     }
@@ -270,10 +283,14 @@ namespace MVC.Controllers
             }
         }
 
+        private void PrepararViewModelYMensajeError(AltaCabañaViewModel vm, string mensaje)
+        {
+            List<TipoCabañaViewModel> tipos = CU_ObtenerTipos.ObtenerTiposCabañasApi();
+            ViewBag.Mensaje = mensaje;
+            vm.TiposCabañas = tipos;
+        }
+
         // GET: CabañaController/Edit/5
-
-
-        
         public ActionResult BuscarPorTextoNombre()
         {
             if (HttpContext.Session.GetString("usuarioLogueadoMail") != null)

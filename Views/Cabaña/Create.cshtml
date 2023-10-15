@@ -10,22 +10,22 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
+        <form asp-action="Create" enctype="multipart/form-data" id="signInForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Cabaña.Nombre" class="control-label">Name</label>
-                <input asp-for="Cabaña.Nombre" class="form-control" />
-                <span asp-validation-for="Cabaña.Nombre" class="text-danger"></span>
+                <input asp-for="Cabaña.Nombre" class="form-control" id="name"/>
+                <span asp-validation-for="Cabaña.Nombre" class="text-danger" id="pName"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Cabaña.Descripcion" class="control-label">Description</label>
-                <input asp-for="Cabaña.Descripcion" class="form-control" />
-                <span asp-validation-for="Cabaña.Descripcion" class="text-danger"></span>
+                <input asp-for="Cabaña.Descripcion" class="form-control" id="description" />
+                <span asp-validation-for="Cabaña.Descripcion" class="text-danger" id="pDescription"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Cabaña.PrecioDiario" class="control-label">Daily Price</label>
-                <input asp-for="Cabaña.PrecioDiario" class="form-control" />
-                <span asp-validation-for="Cabaña.PrecioDiario" class="text-danger"></span>
+                <input asp-for="Cabaña.PrecioDiario" class="form-control" id="price"/>
+                <span asp-validation-for="Cabaña.PrecioDiario" class="text-danger" id="pPrice"></span>
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
@@ -39,13 +39,13 @@
             </div> *@
             <div class="form-group">
                 <label asp-for="Cabaña.CantidadPersonasMax" class="control-label">Maxium Guests</label>
-                <input asp-for="Cabaña.CantidadPersonasMax" class="form-control" min="1" />
-                <span asp-validation-for="Cabaña.CantidadPersonasMax" class="text-danger"></span>
+                <input asp-for="Cabaña.CantidadPersonasMax" class="form-control" min="1" id="guests"/>
+                <span asp-validation-for="Cabaña.CantidadPersonasMax" class="text-danger" id="pGuests"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Foto" class="control-label">Photo</label>
-                <input asp-for="Foto" class="form-control" type="file" />
-                <span asp-validation-for="Foto" class="text-danger"></span>
+                <input asp-for="Foto" class="form-control" type="file" id="photo"/>
+                <span asp-validation-for="Foto" class="text-danger" id="pPhoto"></span>
             </div>
                 <br />
                 <div class="form-group">
@@ -59,7 +59,7 @@
                 </div>
             <br />
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="button" value="Create" class="btn btn-primary" onclick="validarFormulario();" />
             </div>
         </form>
     </div>
@@ -68,3 +68,39 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<script type="text/javascript">
+    function validarFormulario() {
+        let name = document.getElementById('name').value;
+        let description = document.getElementById('description').value;
+        let price = document.getElementById('price').value;
+        let guests = document.getElementById('guests').value;
+        let photo = document.getElementById('photo').value;
+
+        if (name==null) {
+            let pname = document.getElementById('pName');
+            pname.textContent = "The name cannot be empty";
+        }
+        if ( description == null) {
+            let pdescription = document.getElementById('pDescription');
+            pdescription.textContent = "The description cannot be empty";
+        }
+
+        if (price <1) {
+            let pPrice = document.getElementById('pPrice');
+            pPrice.textContent = "The price must be bigger than zero";
+        }
+        if (guests < 1 ) {
+            let pguests = document.getElementById('pGuests');
+            pguests.textContent = "The guests must be bigger than zero";
+        }
+        if (photo == null) {
+            let pPhoto = document.getElementById('pPhoto');
+            pApellido.textContent = "The photo cannot be null";
+        }
+        else {
+            document.getElementById('signInForm').submit();
+            return true;
+        }
+    }
+</script>

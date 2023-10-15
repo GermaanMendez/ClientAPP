@@ -3,5 +3,6 @@
     public interface ILeerContenidoBodyApi
     {
         string LeerContenido(HttpResponseMessage respuesta);
+        string LeerContenido2(HttpResponseMessage respuesta);
     }
 }
